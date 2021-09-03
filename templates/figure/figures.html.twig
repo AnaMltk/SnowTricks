@@ -1,0 +1,8 @@
+{% for figure in figures %}
+	<ul>
+		<li>{{figure.name}}</li>
+		<li>{{figure.description}}</li>
+        {{ dump(figure.photos) }}
+
+	</ul>
+{% endfor %}
