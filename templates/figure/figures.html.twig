@@ -2,7 +2,12 @@
 	<ul>
 		<li>{{figure.name}}</li>
 		<li>{{figure.description}}</li>
-        {{ dump(figure.photos) }}
-
+		<ul>
+			{% for photo in figure.photos %}
+				<li>
+					<img src="{{ asset('img/'~photo.path) }}">
+				</li>
+			{% endfor %}
+		</ul>
 	</ul>
 {% endfor %}

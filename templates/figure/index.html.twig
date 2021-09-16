@@ -25,6 +25,7 @@
 	</div>
 
 	<button type="button" class="btn btn-primary" id="loadMore">Voir plus</button>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -32,9 +33,19 @@
 	{{ parent() }}
 	<script language="javascript">
 		$(document).ready(function () {
+var offset = {{ maxFigures }};
 $('#loadMore').click(function () {
-$.ajax({url: '{{ path('loadMore') }}', method: "GET"}).success(function (data) {
-$('#figures').append(data)
+
+$.ajax({
+url: '{{ path('loadMore') }}' + '/' + offset,
+method: "GET"
+}).success(function (data) {
+$('#figures').append(data);
+offset += {{ maxFigures }};
+if (offset >= {{ figureCount }}) {
+$('#figures').append('No more content');
+$('#loadMore').hide();
+}
 })
 });
 

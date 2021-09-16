@@ -65,11 +65,11 @@ class Figure
     {
         return $this->user;
     }
-   
+
     /**
      * @return Collection | photos[]
      */
-    public function getPhotos() : Collection
+    public function getPhotos(): Collection
     {
         return $this->photos;
     }
@@ -105,7 +105,7 @@ class Figure
         return $this;
     }
 
-   
+
     public function getCreationDate(): ?\DateTimeInterface
     {
         return $this->creation_date;
@@ -129,5 +129,4 @@ class Figure
 
         return $this;
     }
-
 }
