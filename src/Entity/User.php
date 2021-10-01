@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -131,5 +132,10 @@ class User
         $this->token = $token;
 
         return $this;
+    }
+
+    public function getFigures(): Collection
+    {
+        return $this->figures;
     }
 }

@@ -1,6 +1,8 @@
 {% for figure in figures %}
 	<ul>
 		<li>{{figure.name}}</li>
+
+		<a href='{{ path("getFigure", { id:figure.id, slug:figure.name|slug })}}'>Figure</a>
 		<li>{{figure.description}}</li>
 		<ul>
 			{% for photo in figure.photos %}

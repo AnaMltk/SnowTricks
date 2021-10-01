@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Figure Page
+{% endblock %}
+
+{% block body %}
+
+
+	<div class="container-fluid">
+		<div class="col col-md-12">
+			<h1>Figure Page</h1>
+			{{figure.name}}
+			<br>
+			<section class="row">
+
+				{% for photo in figure.photos %}
+					{% if loop.first %}
+						<div class="col-md-12 col-sm-12">
+							<div class="card border-0">
+								<img src="{{ asset('img/'~photo.path) }}">
+							</div>
+						</div>
+
+					{% endif %}
+					<div class="col-md-4 col-sm-12">
+						<div class="card border-0">
+							<img src="{{ asset('img/'~photo.path) }}">
+						</div>
+					</div>
+
+				{% endfor %}
+				<div class="col-md-4 col-sm-12">
+					<div class="card border-0 h-100">
+
+
+						<iframe style="height:inherit" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
+
+
+					</div>
+				</div>
+			</div>
+
+		</section>
+
+		<div>
+			{{ form_start(form)}}
+			{{ form_row(form.content)}}
+
+			{{ form_end(form) }}
+
+		{% endblock %}
