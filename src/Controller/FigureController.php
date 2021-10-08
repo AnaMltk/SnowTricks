@@ -7,6 +7,7 @@ use App\Entity\Figure;
 use App\Entity\Comment;
 use App\Form\FigureType;
 use App\Form\CommentType;
+use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\VideoRepository;
@@ -22,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class FigureController extends AbstractController
 {
     const MAX_FIGURE = 1;
+
     /**
      * @Route("/", name="index")
      */
@@ -50,32 +52,39 @@ class FigureController extends AbstractController
         return $this->render('figure/figures.html.twig', ['figures' => $figures]);
     }
 
+
+
     /**
      * @Route("/figure/{id}-{slug}", name="getFigure")
      */
-    public function getFigure($id, FigureRepository $figureRepository, Request $request): Response
+    public function getFigure($id, FigureRepository $figureRepository, Request $request, UserRepository $userRepository, CommentRepository $commentRepository): Response
     {
         $figure = $figureRepository->find($id);
 
+        /*$comments = $figure->getComments();
+        $comments = $commentRepository->findBy([], ['creation_date' => 'DESC'], self::MAX_COMMENT, 0);
+        $commentCount = $commentRepository->count([]);
+        dump($comments);
+        $comment = new Comment();*/
         $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment, [
+            'action' => $this->generateUrl('newComment'),
+            'method' => 'POST'
+        ]);
 
-        $form = $this->createForm(CommentType::class);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
+        /*if ($form->isSubmitted() && $form->isValid()) {
 
             $comment = $form->getData();
-
             $comment->setFigure($figure);
 
             $comment->setCreationDate(new \DateTime());
-            $comment->setUserId(5);
-
-
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($comment);
             $entityManager->flush();
-        }
+        }*/
+
+
 
         return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView()]);
     }

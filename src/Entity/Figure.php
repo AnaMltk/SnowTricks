@@ -35,6 +35,11 @@ class Figure
      */
     private $videos;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment",mappedBy="figure")
+     */
+    private $comments;
+
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -94,6 +99,18 @@ class Figure
     public function setVideos($videos)
     {
         $this->videos = $videos;
+
+        return $this;
+    }
+
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
 
         return $this;
     }
