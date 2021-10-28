@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Figure Page
+{% endblock %}
+
+{% block body %}
+	<div class="container px-4 px-lg-5">
+		<div class="col col-md-12">
+			<h1>Figure Page</h1>
+			{{figure.name}}
+			<br>
+			<section class="row">
+
+				{% for photo in figure.photos %}
+					{% if loop.first %}
+						<div class="col-md-12 col-sm-12">
+							<div class="card border-0">
+								<img src="{{ asset('img/'~photo.path) }}">
+							</div>
+						</div>
+
+					{% endif %}
+					<div class="col-md-4 col-sm-12">
+						<div class="card border-0">
+							<a href='{{ path("edit_photo", { id:photo.id})}}'>Edit photo</a>
+							<img src="{{ asset('img/'~photo.path) }}">
+						</div>
+					</div>
+
+				{% endfor %}
+				<div class="col-md-4 col-sm-12">
+					<div class="card border-0 h-100">
+
+
+						<iframe style="height:inherit" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
+
+
+					</div>
+				</div>
+			</div>
+
+		</section>
+
+		{{ form_start(form)}}
+		{{ form_row(form.name)}}
+		{{ form_row(form.description)}}
+
+
+		{{ form_end(form)}}
+	{% endblock %}

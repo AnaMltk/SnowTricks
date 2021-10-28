@@ -6,7 +6,7 @@
 {% block body %}
 
 
-	<div class="container-fluid">
+	<div class="container px-4 px-lg-5">
 		<div class="col col-md-12">
 			<h1>Figure Page</h1>
 			{{figure.name}}
@@ -43,10 +43,6 @@
 		</section>
 
 		<div>
-			{{ form_start(form)}}
-			{{ form_row(form.content)}}
-
-			{{ form_end(form) }}
 
 
 			<div id="comments">
@@ -58,26 +54,26 @@
 
 		{% block javascripts %}
 			{#}
-									{{ parent() }}
-									<script language="javascript">
-										$(document).ready(function () {
-						var offset = {{ maxComments }};
-						$('#loadMoreComments').click(function () {
-						
-						$.ajax({
-						url: '{{ path('loadMoreComments') }}' + '/' + offset,
-						method: "GET"
-						}).success(function (data) {
-						$('#comments').append(data);
-						offset += {{ maxComments }};
-						if (offset >= {{ commentCount }}) {
-						$('#comments').append('No more content');
-						$('#loadMoreComments').hide();
-						}
-						})
-						});
-						
-						});
-						#}
+															{{ parent() }}
+															<script language="javascript">
+																$(document).ready(function () {
+												var offset = {{ maxComments }};
+												$('#loadMoreComments').click(function () {
+												
+												$.ajax({
+												url: '{{ path('loadMoreComments') }}' + '/' + offset,
+												method: "GET"
+												}).success(function (data) {
+												$('#comments').append(data);
+												offset += {{ maxComments }};
+												if (offset >= {{ commentCount }}) {
+												$('#comments').append('No more content');
+												$('#loadMoreComments').hide();
+												}
+												})
+												});
+												
+												});
+												#}
 		</script>
 	{% endblock %}

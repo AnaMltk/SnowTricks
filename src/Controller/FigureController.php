@@ -3,15 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Photo;
+use App\Entity\Video;
 use App\Entity\Figure;
 use App\Entity\Comment;
 use App\Form\FigureType;
 use App\Form\CommentType;
-use App\Repository\CommentRepository;
+use App\Form\PhotoType;
 use App\Repository\UserRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\VideoRepository;
 use App\Repository\FigureRepository;
+use App\Repository\CommentRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,7 +26,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FigureController extends AbstractController
 {
-    const MAX_FIGURE = 1;
+    const MAX_FIGURE = 3;
 
     /**
      * @Route("/", name="index")
@@ -92,35 +96,105 @@ class FigureController extends AbstractController
     /**
      * @Route("/new", name="new")
      */
-    public function new(UserRepository $userRepository, Request $request): Response
+    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
-        $user = $userRepository->find(5);
+        $user = $userRepository->find(6);
         $figure = new Figure();
 
-        $form = $this->createForm(FigureType::class);
+        $form = $this->createForm(FigureType::class, $figure);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $photos = $form->get('photo');
-            /*foreach ($photos as $photo) {
-                dump($photo->get('path')->getData());
-            }*/
-            $videos = $form->get('video');
-
+            // General
             $figure = $form->getData();
-            dump($figure);
             $figure->setUser($user);
-
             $figure->setCreationDate(new \DateTime());
             $figure->setModificationDate(new \DateTime());
 
-            $entityManager = $this->getDoctrine()->getManager();
+            // Videos
+            $videos = $form->get('video')->getData();
+            foreach ($videos as $video) {
+                $figureVideo = new Video();
+                $figureVideo->setLink($video->getLink());
+                $figureVideo->setAlt($video->getAlt());
+                $figureVideo->setCreationDate(new \Datetime());
+                $figureVideo->setFigure($figure);
+                $entityManager->persist($figureVideo);
+            }
+
+            // Photos
+            $photos = $form->get('photo');
+            foreach ($photos as $photoData) {
+                /** @var UploadedFile $figurePhoto */
+                $figurePhoto = $photoData->get('path')->getData();
+                $figurePhotoFilename = uniqid() . '.' . $figurePhoto->guessExtension();
+
+                // Copy file to directory
+                $figurePhoto->move(
+                    'img', //TODO:  define folder destination as parameter
+                    $figurePhotoFilename
+                );
+                $photo = new Photo();
+                $photo->setPath($figurePhotoFilename);
+                $photo->setAlt($photoData->get('alt')->getData());
+                $photo->setFigure($figure);
+                $photo->setCreationDate(new \DateTime());
+                $entityManager->persist($photo);
+            }
+
             $entityManager->persist($figure);
             $entityManager->flush();
         }
 
-
         return $this->renderForm('figure/newFigure.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * @Route("/edit/{id}-{slug}", name="edit")
+     */
+    public function edit($id, FigureRepository $figureRepository, Request $request): Response
+    {
+        $figure = $figureRepository->find($id);
+
+        $form = $this->createForm(FigureType::class, $figure);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $figure->setModificationDate(new \DateTime());
+            $entityManager = $this->getDoctrine()->getManager();
+
+            $entityManager->persist($figure);
+            $entityManager->flush();
+        }
+
+        return $this->render('figure/editFigure.html.twig', ['figure' => $figure, 'form' => $form->createView()]);
+    }
+    /**
+     * @Route("/edit_photo/{id}", name="edit_photo")
+     */
+    public function editPhoto($id, Request $request, PhotoRepository $photoRepository): Response
+    {
+        $photo = $photoRepository->find($id);
+        $form = $this->createForm(PhotoType::class, $photo);
+        $form->handleRequest($request);
+        $entityManager = $this->getDoctrine()->getManager();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $photoData = $form->get('path')->getData();
+            $photoFilename = uniqid() . '.' . $photoData->guessExtension();
+            $photoData->move(
+                'img',
+                $photoFilename
+            );
+
+            $photo->setPath($photoFilename);
+            $photo->setAlt($form->get('alt')->getData());
+            $entityManager->persist($photo);
+            $entityManager->flush();
+        }
+        return $this->renderForm('figure/editPhoto.html.twig', [
             'form' => $form,
         ]);
     }

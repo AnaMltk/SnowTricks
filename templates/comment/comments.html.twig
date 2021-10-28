@@ -1,3 +1,9 @@
+{#{{ form_start(form)}}
+{{ form_row(form.content)}}
+
+{{ form_end(form) }}
+#}
+
 {% for comment in figure.comments %}
 	<ul>
 		<li>{{comment.content}}</li>
