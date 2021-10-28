@@ -18,7 +18,7 @@ class Video
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Figure",inversedBy="figures", )
+     * @ORM\ManyToOne(targetEntity="App\Entity\Figure",inversedBy="videos", cascade={"persist"})
      * @ORM\JoinColumn(name="figure_id",referencedColumnName="id", onDelete="CASCADE")
      */
     private $figure;

@@ -1,13 +1,19 @@
 {% for figure in figures %}
-	<ul>
-		<li>{{figure.name}}</li>
-		<li>{{figure.description}}</li>
-		<ul>
+	<div class="col col-md-4 col-sm-12">
+		<div class="card border-0">
+			<span class="text-center">
+				{{figure.name}}
+				<br>
+				<a href='{{ path("getFigure", { id:figure.id, slug:figure.name|slug })}}'>Figure</a>
+				<a href='{{ path("edit", { id:figure.id, slug:figure.name|slug })}}'>Edit</a>
+				<br>
+				{{figure.description}}</span>
+
 			{% for photo in figure.photos %}
-				<li>
+				{% if loop.first %}
 					<img src="{{ asset('img/'~photo.path) }}">
-				</li>
+				{% endif %}
 			{% endfor %}
-		</ul>
-	</ul>
+		</div>
+	</div>
 {% endfor %}

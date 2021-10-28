@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Figure Page
+{% endblock %}
+
+{% block body %}
+	<div class="container px-4 px-lg-5">
+		<h1 class="text-center title">Registration</h1>
+		{{ form_start(form)}}
+		{{ form_row(form.email)}}
+		{{ form_row(form.password)}}
+
+
+		{{ form_end(form)}}
+
+	</div>
+{% endblock %}

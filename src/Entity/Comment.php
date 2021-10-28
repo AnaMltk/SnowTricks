@@ -24,7 +24,7 @@ class Comment
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Figure",inversedBy="figures")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Figure",inversedBy="comments")
      * @ORM\JoinColumn(name="figure_id",referencedColumnName="id", onDelete="CASCADE")
      */
     private $figure;
@@ -54,6 +54,13 @@ class Comment
     {
         return $this->figure;
     }
+    public function setFigure($figure): self
+    {
+        $this->figure = $figure;
+
+        return $this;
+    }
+
 
 
     public function getCreationDate(): ?\DateTimeInterface
@@ -76,6 +83,12 @@ class Comment
     public function setContent(string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+    public function setUser($user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

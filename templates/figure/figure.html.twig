@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Figure Page
+{% endblock %}
+
+{% block body %}
+
+
+	<div class="container px-4 px-lg-5">
+		<div class="col col-md-12">
+			<h1>Figure Page</h1>
+			{{figure.name}}
+			<br>
+			<section class="row">
+
+				{% for photo in figure.photos %}
+					{% if loop.first %}
+						<div class="col-md-12 col-sm-12">
+							<div class="card border-0">
+								<img src="{{ asset('img/'~photo.path) }}">
+							</div>
+						</div>
+
+					{% endif %}
+					<div class="col-md-4 col-sm-12">
+						<div class="card border-0">
+							<img src="{{ asset('img/'~photo.path) }}">
+						</div>
+					</div>
+
+				{% endfor %}
+				<div class="col-md-4 col-sm-12">
+					<div class="card border-0 h-100">
+
+
+						<iframe style="height:inherit" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
+
+
+					</div>
+				</div>
+			</div>
+
+		</section>
+
+		<div>
+
+
+			<div id="comments">
+				{{ include ("comment/comments.html.twig") }}
+			</div>
+			<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>
+
+		{% endblock %}
+
+		{% block javascripts %}
+			{#}
+															{{ parent() }}
+															<script language="javascript">
+																$(document).ready(function () {
+												var offset = {{ maxComments }};
+												$('#loadMoreComments').click(function () {
+												
+												$.ajax({
+												url: '{{ path('loadMoreComments') }}' + '/' + offset,
+												method: "GET"
+												}).success(function (data) {
+												$('#comments').append(data);
+												offset += {{ maxComments }};
+												if (offset >= {{ commentCount }}) {
+												$('#comments').append('No more content');
+												$('#loadMoreComments').hide();
+												}
+												})
+												});
+												
+												});
+												#}
+		</script>
+	{% endblock %}

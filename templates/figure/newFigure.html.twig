@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Figure Page
+{% endblock %}
+
+{% block body %}
+	{{ form_start(form)}}
+	{{ form_row(form.name)}}
+	{{ form_row(form.description)}}
+
+	<div id="photos" class="photos" data-prototype="{{ form_widget(form.photo.vars.prototype)|e('html_attr') }}">
+		{{ form_widget(form.photo) }}
+	</div>
+	<button id="add-photo" class="add-photo" type="button" data-collection-holder-class="photos">Add a photo</button>
+
+	<img id="preview" src="#" placeholder="your image"/>
+	<input type="hidden" id="photo-counter" value="0">
+
+
+	<div id="videos" class="videos" data-prototype="{{ form_widget(form.video.vars.prototype)|e('html_attr') }}">
+		{{ form_widget(form.video) }}
+	</div>
+
+
+	<button id="add-video" class="add-video" type="button" data-collection-holder-class="videos">Add a video</button>
+
+	<input type="hidden" id="video-counter" value="0">
+	{{ form_end(form)}}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		$(document).ready(function () {
+$('#add-photo').on('click', function (e) {
+const index = + $('#photo-counter').val();
+const tmpl = $('.photos').data('prototype').replace(/__name__/g, index);
+console.log($('.photos'))
+$('#photo-counter').val(index + 1);
+$('#photos').append(tmpl);
+});
+})
+
+$(document).ready(function () {
+$('#add-video').on('click', function (e) {
+const index = + $('#video-counter').val();
+const tmpl = $('.videos').data('prototype').replace(/__name__/g, index);
+$('#video-counter').val(index + 1);
+$('#videos').append(tmpl);
+
+});
+})
+	</script>
+{% endblock %}

@@ -20,8 +20,8 @@ class Figure
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User",inversedBy="users")
-     * @ORM\JoinColumn(name="user_id",referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User",inversedBy="figures")
+     * @ORM\JoinColumn(name="user_id",referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     private $user;
 
@@ -29,6 +29,16 @@ class Figure
      * @ORM\OneToMany(targetEntity="App\Entity\Photo",mappedBy="figure")
      */
     private $photos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Video",mappedBy="figure")
+     */
+    private $videos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment",mappedBy="figure")
+     */
+    private $comments;
 
 
     /**
@@ -72,6 +82,37 @@ class Figure
     public function getPhotos(): Collection
     {
         return $this->photos;
+    }
+
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function setPhotos($photos)
+    {
+        $this->photos = $photos;
+
+        return $this;
+    }
+
+    public function setVideos($videos)
+    {
+        $this->videos = $videos;
+
+        return $this;
+    }
+
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
+
+        return $this;
     }
 
     public function setUser(User $user): self
