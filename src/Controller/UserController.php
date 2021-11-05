@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\ForgotPasswordType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\Mailer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -85,18 +86,22 @@ class UserController extends AbstractController
         return new Response('Well hi there ' . $user->getEmail());
     }
 
-    public function forgotPassword(Request $request, TokenGeneratorInterface $tokenGenerator): Response
+    /**
+     * @Route("/forgotPassword", name="forgotPassword")
+     */
+    public function forgotPassword(Request $request, TokenGeneratorInterface $tokenGenerator, Mailer $mailer): Response
     {
-
-        $userRepository = new UserRepository();
+        $mailer->sendEmail();
+        die;
+        //$userRepository = new UserRepository();
         $form = $this->createForm(ForgotPasswordType::class);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $userRepository->findOneBy(['email' => $form['email']->getData()]);
+            //$user = $userRepository->findOneBy(['email' => $form['email']->getData()]);
             $token = $tokenGenerator->generateToken();
-            return $this->redirectToRoute('reset_password');
+            $mailer->sendEmail();
         }
         return $this->renderForm('user/newUser.html.twig', [
             'form' => $form,

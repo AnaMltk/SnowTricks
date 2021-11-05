@@ -3,10 +3,32 @@
 {% block title %}Hello FigureController!
 {% endblock %}
 
+{% block header %}
+	<header class="header-img" style="background-image: url('/img/header.jpg')">
+				<div class="container position-relative px-4 px-lg-5">
+					<div class="row gx-4 gx-lg-5 justify-content-center">
+						<div class="col-md-12 col-lg-8 col-xl-7">
+							<div class="site-heading">
+								<h1 class="text-center" id="title">Snow Tricks</h1>
+								<h2 class="text-center" id="slogan">Snow must go on</h2>
+							</div>
+						</div>
+		
+					</div>
+		
+				</div>
+		
+		
+			</header>
+			<button type="button" class="btn position-absolute" id="scroll-down">
+				<i class="fas fa-chevron-down"></i>
+			</button>
+	
+{% endblock %}
+
 {% block body %}
 
-	<div class="container-fluid">
-		<h1 class="text-center title">Page d'accueil</h1>
+	<div class="container-fluid" id="tricks">
 
 
 		<div class="row" id="figures">
@@ -15,8 +37,9 @@
 
 		</div>
 
-
-		<button type="button" class="btn btn-primary" id="loadMore">Voir plus</button>
+		<div class="text-center">
+			<button type="button" class="btn btn-outline-dark" id="loadMore">Voir plus</button>
+		</div>
 	</div>
 {% endblock %}
 
@@ -35,12 +58,21 @@ method: "GET"
 $('#figures').append(data);
 offset += {{ maxFigures }};
 if (offset >= {{ figureCount }}) {
-$('#figures').append('No more content');
+$('#figures').append('');
 $('#loadMore').hide();
 }
 })
 });
 
 });
+
+var hiddenElement = document.getElementById("tricks");
+var btn = document.querySelector('.btn');
+
+function handleButtonClick() {
+hiddenElement.scrollIntoView({block: "center", behavior: "smooth"});
+}
+
+btn.addEventListener('click', handleButtonClick);
 	</script>
 {% endblock %}

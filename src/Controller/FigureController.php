@@ -7,9 +7,11 @@ use App\Entity\Photo;
 use App\Entity\Video;
 use App\Entity\Figure;
 use App\Entity\Comment;
+use App\Form\PhotoType;
+use App\Form\VideoType;
 use App\Form\FigureType;
 use App\Form\CommentType;
-use App\Form\PhotoType;
+use App\Service\AddPhoto;
 use App\Repository\UserRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\VideoRepository;
@@ -26,7 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FigureController extends AbstractController
 {
-    const MAX_FIGURE = 3;
+    const MAX_FIGURE = 5;
 
     /**
      * @Route("/", name="index")
@@ -96,7 +98,7 @@ class FigureController extends AbstractController
     /**
      * @Route("/new", name="new")
      */
-    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request): Response
+    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, AddPhoto $addPhoto): Response
     {
         $user = $userRepository->find(6);
         $figure = new Figure();
@@ -123,10 +125,10 @@ class FigureController extends AbstractController
             }
 
             // Photos
-            $photos = $form->get('photo');
+            /*$photos = $form->get('photo');
             foreach ($photos as $photoData) {
                 /** @var UploadedFile $figurePhoto */
-                $figurePhoto = $photoData->get('path')->getData();
+            /*$figurePhoto = $photoData->get('path')->getData();
                 $figurePhotoFilename = uniqid() . '.' . $figurePhoto->guessExtension();
 
                 // Copy file to directory
@@ -140,8 +142,8 @@ class FigureController extends AbstractController
                 $photo->setFigure($figure);
                 $photo->setCreationDate(new \DateTime());
                 $entityManager->persist($photo);
-            }
-
+            }*/
+            $addPhoto->add($form, $figure, $entityManager);
             $entityManager->persist($figure);
             $entityManager->flush();
         }
@@ -192,6 +194,25 @@ class FigureController extends AbstractController
             $photo->setPath($photoFilename);
             $photo->setAlt($form->get('alt')->getData());
             $entityManager->persist($photo);
+            $entityManager->flush();
+        }
+        return $this->renderForm('figure/editPhoto.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    public function editVideo($id, Request $request, VideoRepository $videoRepository): Response
+    {
+        $video = $videoRepository->find($id);
+        $form = $this->createForm(VideoType::class, $video);
+        $form->handleRequest($request);
+        $entityManager = $this->getDoctrine()->getManager();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $videoData = $form->get('link')->getData();
+
+            $video->setLink($videoData);
+            $video->setAlt($form->get('alt')->getData());
+            $entityManager->persist($video);
             $entityManager->flush();
         }
         return $this->renderForm('figure/editPhoto.html.twig', [
