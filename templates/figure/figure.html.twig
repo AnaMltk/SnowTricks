@@ -5,75 +5,80 @@
 
 {% block body %}
 
+	<div class="container-fluid" id="tricks">
+		<div class="container px-4 px-lg-5">
+			<div class="col col-md-12">
+				<section class="row">
 
-	<div class="container px-4 px-lg-5">
-		<div class="col col-md-12">
-			<h1>Figure Page</h1>
-			{{figure.name}}
-			<br>
-			<section class="row">
+					{% for photo in figure.photos %}
+						{% if loop.first %}
+							<div class="wrapper col-md-12 col-sm-12">
+								<div class="card border-0">
+									<img class="img-fluid main-image" src="{{ asset('img/'~photo.path) }}">
+								</div>
+								<div class="overlay">
+									<h2 class="header">{{figure.name}}</h2>
+								</div>
+							</div>
 
-				{% for photo in figure.photos %}
-					{% if loop.first %}
-						<div class="col-md-12 col-sm-12">
-							<div class="card border-0">
-								<img src="{{ asset('img/'~photo.path) }}">
+						{% endif %}
+						<div class="col-md-4 col-sm-12">
+							<div class="card border-0 mt-2">
+								<img class="trick-image" src="{{ asset('img/'~photo.path) }}">
 							</div>
 						</div>
 
-					{% endif %}
+					{% endfor %}
 					<div class="col-md-4 col-sm-12">
-						<div class="card border-0">
-							<img src="{{ asset('img/'~photo.path) }}">
+						<div class="card border-0 mt-2">
+
+
+							<iframe class="embed-responsive" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
+
+
 						</div>
 					</div>
-
-				{% endfor %}
-				<div class="col-md-4 col-sm-12">
-					<div class="card border-0 h-100">
-
-
-						<iframe style="height:inherit" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
-
-
-					</div>
 				</div>
+
+			</section>
+			<br>
+			<p class="text-center">{{figure.description}}</p>
+
+
+			{{ include ("comment/comments.html.twig") }}
+
+
+			<div>
+
+
+				<div id="comments"></div>
+				{#<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>#}
 			</div>
-
-		</section>
-
-		<div>
-
-
-			<div id="comments">
-				{{ include ("comment/comments.html.twig") }}
-			</div>
-			<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>
-
-		{% endblock %}
-
-		{% block javascripts %}
-			{#}
-															{{ parent() }}
-															<script language="javascript">
-																$(document).ready(function () {
-												var offset = {{ maxComments }};
-												$('#loadMoreComments').click(function () {
-												
-												$.ajax({
-												url: '{{ path('loadMoreComments') }}' + '/' + offset,
-												method: "GET"
-												}).success(function (data) {
-												$('#comments').append(data);
-												offset += {{ maxComments }};
-												if (offset >= {{ commentCount }}) {
-												$('#comments').append('No more content');
-												$('#loadMoreComments').hide();
-												}
-												})
-												});
-												
-												});
-												#}
-		</script>
-	{% endblock %}
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+	{#}
+																									
+																									<script language="javascript">
+																										$(document).ready(function () {
+																						var offset = {{ maxComments }};
+																						$('#loadMoreComments').click(function () {
+																						
+																						$.ajax({
+																						url: '{{ path('loadMoreComments') }}' + '/' + offset,
+																						method: "GET"
+																						}).success(function (data) {
+																						$('#comments').append(data);
+																						offset += {{ maxComments }};
+																						if (offset >= {{ commentCount }}) {
+																						$('#comments').append('No more content');
+																						$('#loadMoreComments').hide();
+																						}
+																						})
+																						});
+																						
+																						});
+																						#}
+</script>{% endblock %}

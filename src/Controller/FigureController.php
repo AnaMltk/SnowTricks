@@ -11,7 +11,7 @@ use App\Form\PhotoType;
 use App\Form\VideoType;
 use App\Form\FigureType;
 use App\Form\CommentType;
-use App\Service\AddPhoto;
+use App\Service\PhotoUploader;
 use App\Repository\UserRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\VideoRepository;
@@ -98,13 +98,13 @@ class FigureController extends AbstractController
     /**
      * @Route("/new", name="new")
      */
-    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, AddPhoto $addPhoto): Response
+    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, PhotoUploader $photoUploader): Response
     {
         $user = $userRepository->find(6);
         $figure = new Figure();
 
         $form = $this->createForm(FigureType::class, $figure);
-
+        $error = '';
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // General
@@ -125,31 +125,23 @@ class FigureController extends AbstractController
             }
 
             // Photos
-            /*$photos = $form->get('photo');
+            $photos = $form->get('photo');
             foreach ($photos as $photoData) {
-                /** @var UploadedFile $figurePhoto */
-            /*$figurePhoto = $photoData->get('path')->getData();
-                $figurePhotoFilename = uniqid() . '.' . $figurePhoto->guessExtension();
-
-                // Copy file to directory
-                $figurePhoto->move(
-                    'img', //TODO:  define folder destination as parameter
-                    $figurePhotoFilename
-                );
                 $photo = new Photo();
-                $photo->setPath($figurePhotoFilename);
-                $photo->setAlt($photoData->get('alt')->getData());
-                $photo->setFigure($figure);
-                $photo->setCreationDate(new \DateTime());
-                $entityManager->persist($photo);
-            }*/
-            $addPhoto->add($form, $figure, $entityManager);
+                if ($photoUploader->upload($entityManager, $photoData, $photo, $figure)) {
+                    continue;
+                }
+                $error = 'Impossible d\'enrigistrer';
+                // $addPhoto->add($entityManager, $photoData, $photo, $figure);
+            }
+
             $entityManager->persist($figure);
             $entityManager->flush();
         }
 
         return $this->renderForm('figure/newFigure.html.twig', [
             'form' => $form,
+            'error' => $error
         ]);
     }
 
@@ -177,14 +169,21 @@ class FigureController extends AbstractController
     /**
      * @Route("/edit_photo/{id}", name="edit_photo")
      */
-    public function editPhoto($id, Request $request, PhotoRepository $photoRepository): Response
+    public function editPhoto($id, Request $request, PhotoRepository $photoRepository, PhotoUploader $photoUploader): Response
     {
+        $error = '';
         $photo = $photoRepository->find($id);
         $form = $this->createForm(PhotoType::class, $photo);
         $form->handleRequest($request);
         $entityManager = $this->getDoctrine()->getManager();
         if ($form->isSubmitted() && $form->isValid()) {
-            $photoData = $form->get('path')->getData();
+            if ($photoUploader->upload($entityManager, $form, $photo)) {
+                $entityManager->flush();
+                //TODO faire la redirection
+            }
+            $error = 'Impossible d\'enrigistrer';
+
+            /* $photoData = $form->get('path')->getData();
             $photoFilename = uniqid() . '.' . $photoData->guessExtension();
             $photoData->move(
                 'img',
@@ -194,10 +193,11 @@ class FigureController extends AbstractController
             $photo->setPath($photoFilename);
             $photo->setAlt($form->get('alt')->getData());
             $entityManager->persist($photo);
-            $entityManager->flush();
+            $entityManager->flush();*/
         }
-        return $this->renderForm('figure/editPhoto.html.twig', [
-            'form' => $form,
+        return $this->render('figure/editPhoto.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error
         ]);
     }
 

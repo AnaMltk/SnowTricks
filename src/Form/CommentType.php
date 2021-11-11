@@ -16,7 +16,13 @@ class CommentType extends AbstractType
     {
         $builder
 
-            ->add('content', TextType::class)
+            ->add('content', TextType::class, [
+                'attr' => [
+                    'placeholder' => 'Comment',
+                ],
+                'row_attr' => [
+                    'class' => 'form-floating',
+                ]])
 
             ->add('save', SubmitType::class);
     }

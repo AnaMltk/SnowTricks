@@ -4,6 +4,9 @@
 {% endblock %}
 
 {% block body %}
+	{% if error %}
+		{{ error }}
+	{% endif %}
 	{{ form_start(form)}}
 	{{ form_row(form.name)}}
 	{{ form_row(form.description)}}

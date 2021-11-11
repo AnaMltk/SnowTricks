@@ -1,23 +1,26 @@
+<div class="row d-flex justify-content-center" id="figures">
+	{% for figure in figures %}
 
-{% for figure in figures %}
-	<div class="col col-md-3 col-sm-12">
-		<div class="card border-0">
+		<div class="col-lg-2 col-md-6">
+			<div class="card border-0 mt-2">
 
-			{% for photo in figure.photos %}
-				{% if loop.first %}
-					<img class="card-img-topx" src="{{ asset('img/'~photo.path) }}">
-				{% endif %}
-			{% endfor %}
-			<div class="card card-body border-0" id="figure">
-				<span class="d-flex align-items-center">
-					<a href='{{ path("getFigure", { id:figure.id, slug:figure.name|slug })}}'>{{figure.name}}</a>
-				</span>
+				{% for photo in figure.photos %}
+					{% if loop.first %}
+						<img class="card-img-topx trick-image" src="{{ asset('img/'~photo.path) }}">
+					{% endif %}
+				{% endfor %}
+				<div class="card card-body border-0" id="figure">
+					<span class="d-flex align-items-center">
+						<a href='{{ path("getFigure", { id:figure.id, slug:figure.name|slug })}}'>{{figure.name}}</a>
+					</span>
 
-				<a href='{{ path("edit", { id:figure.id, slug:figure.name|slug })}}'>
-					<i class="fa fa-pencil"></i>
-				</a>
+					<a href='{{ path("edit", { id:figure.id, slug:figure.name|slug })}}'>
+						<i class="fa fa-pencil"></i>
+					</a>
 
+				</div>
 			</div>
 		</div>
-	</div>
-{% endfor %}
+
+	{% endfor %}
+</div>
