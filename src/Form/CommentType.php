@@ -24,7 +24,11 @@ class CommentType extends AbstractType
                     'class' => 'form-floating',
                 ]])
 
-            ->add('save', SubmitType::class);
+            ->add('save', SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-outline-secondary text-uppercase',
+                ]
+            ]);
     }
     public function configureOptions(OptionsResolver $resolver)
     {

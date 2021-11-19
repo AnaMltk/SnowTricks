@@ -182,21 +182,9 @@ class FigureController extends AbstractController
                 //TODO faire la redirection
             }
             $error = 'Impossible d\'enrigistrer';
-
-            /* $photoData = $form->get('path')->getData();
-            $photoFilename = uniqid() . '.' . $photoData->guessExtension();
-            $photoData->move(
-                'img',
-                $photoFilename
-            );
-
-            $photo->setPath($photoFilename);
-            $photo->setAlt($form->get('alt')->getData());
-            $entityManager->persist($photo);
-            $entityManager->flush();*/
         }
-        return $this->render('figure/editPhoto.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('figure/editPhoto.html.twig', [
+            'form' => $form,
             'error' => $error
         ]);
     }

@@ -4,47 +4,90 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container px-4 px-lg-5">
-		<div class="col col-md-12">
-			<h1>Figure Page</h1>
-			{{figure.name}}
-			<br>
-			<section class="row">
+	<div class="container-fluid" id="tricks">
+		<div class="container px-4 px-lg-5">
+			<div class="col col-md-12">
+				<section class="row">
 
-				{% for photo in figure.photos %}
-					{% if loop.first %}
-						<div class="col-md-12 col-sm-12">
-							<div class="card border-0">
-								<img src="{{ asset('img/'~photo.path) }}">
+					{% for photo in figure.photos %}
+						{% if loop.first %}
+							<div class="wrapper col-md-12 col-sm-12">
+								<div class="card border-0">
+									<img class="img-fluid main-image" src="{{ asset('img/'~photo.path) }}">
+								</div>
+								<div class="overlay">
+									<h2 class="header">{{figure.name}}</h2>
+								</div>
+							</div>
+
+						{% endif %}
+						<div class="col-md-4 col-sm-12">
+							<div class="card border-0 mt-2" id="figure">
+
+								<img class="card-img-topx trick-image trick-image" src="{{ asset('img/'~photo.path) }}">
+								<div class="card-text">
+									<a data-toggle="modal" href='{{ path("edit_photo", { id:photo.id})}}' data-target="#exampleModal">
+										<i class="fas fa-pen"></i>
+									</a>
+								</div>
 							</div>
 						</div>
-
-					{% endif %}
+						{#<div class="col-md-4 col-sm-12">
+						<div class="card border-0 mt-2" id="figure">
+																														
+						<img class="card-img-topx trick-image trick-image" src="{{ asset('img/'~photo.path) }}">
+						<div class="card-text">
+						<a data-toggle="modal" href='{{ path("edit_photo", { id:photo.id})}}' data-target="#exampleModal">
+							<i class="fas fa-pen"></i>
+					    </a>
+						</div>
+			            </div>
+						</div>
+						<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+						<div class="modal-content">
+						<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+						</div>
+						<div class="modal-body">
+						{{ render(controller('App\\Controller\\FigureController:editPhoto', {'id':photo.id})) }}
+						</div>
+																														
+						</div>
+			            </div>
+						</div>
+						</div>
+						</div>
+						</div>#}
+					{% endfor %}
 					<div class="col-md-4 col-sm-12">
-						<div class="card border-0">
-							<a href='{{ path("edit_photo", { id:photo.id})}}'>Edit photo</a>
-							<img src="{{ asset('img/'~photo.path) }}">
+						<div class="card border-0 mt-2">
+
+
+							<iframe class="embed-responsive" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
+
+
 						</div>
 					</div>
+				</section>
+				<div class="container">
+					<div class="row justify-content-center">
+						<div class="col-md-6">
+							{{ form_start(form)}}
+							{{ form_row(form.name)}}
+							{{ form_row(form.description)}}
 
-				{% endfor %}
-				<div class="col-md-4 col-sm-12">
-					<div class="card border-0 h-100">
 
-
-						<iframe style="height:inherit" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
-
-
+							{{ form_end(form)}}
+						</div>
 					</div>
 				</div>
 			</div>
-
-		</section>
-
-		{{ form_start(form)}}
-		{{ form_row(form.name)}}
-		{{ form_row(form.description)}}
+		</div>
+	</div>
 
 
-		{{ form_end(form)}}
-	{% endblock %}
+{% endblock %}

@@ -4,31 +4,38 @@
 {% endblock %}
 
 {% block body %}
-	{% if error %}
-		{{ error }}
-	{% endif %}
-	{{ form_start(form)}}
-	{{ form_row(form.name)}}
-	{{ form_row(form.description)}}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-6">
+				{% if error %}
+					{{ error }}
+				{% endif %}
+				<h1 class="mb-5 text-center">Ajoutez le nouveau figure</h1>
+				{{ form_start(form)}}
+				<div class="form-group">
+					{{ form_row(form.name)}}
+				</div>
+				<div class="form-group">
+					{{ form_row(form.description)}}
+				</div>
+				<div id="photos" class="photos" data-prototype="{{ form_widget(form.photo.vars.prototype)|e('html_attr') }}">
+					{{ form_widget(form.photo) }}
+				</div>
+				<button id="add-photo" class="btn btn-outline-secondary text-uppercase add-photo" type="button" data-collection-holder-class="photos">Add a photo</button>
 
-	<div id="photos" class="photos" data-prototype="{{ form_widget(form.photo.vars.prototype)|e('html_attr') }}">
-		{{ form_widget(form.photo) }}
+				<input type="hidden" id="photo-counter" value="0">
+				
+				<div id="videos" class="videos" data-prototype="{{ form_widget(form.video.vars.prototype)|e('html_attr') }}">
+					{{ form_widget(form.video) }}
+				</div>
+
+				<button id="add-video" class="btn btn-outline-secondary text-uppercase add-video" type="button" data-collection-holder-class="videos">Add a video</button>
+				<input type="hidden" id="video-counter" value="0">
+				
+				{{ form_end(form)}}
+			</div>
+		</div>
 	</div>
-	<button id="add-photo" class="add-photo" type="button" data-collection-holder-class="photos">Add a photo</button>
-
-	<img id="preview" src="#" placeholder="your image"/>
-	<input type="hidden" id="photo-counter" value="0">
-
-
-	<div id="videos" class="videos" data-prototype="{{ form_widget(form.video.vars.prototype)|e('html_attr') }}">
-		{{ form_widget(form.video) }}
-	</div>
-
-
-	<button id="add-video" class="add-video" type="button" data-collection-holder-class="videos">Add a video</button>
-
-	<input type="hidden" id="video-counter" value="0">
-	{{ form_end(form)}}
 {% endblock %}
 
 {% block javascripts %}

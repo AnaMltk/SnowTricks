@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\Group;
+use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FigureRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=FigureRepository::class)
@@ -51,6 +52,10 @@ class Figure
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Group",inversedBy="figure")
+     */
+    private $group;
 
     /**
      * @ORM\Column(type="datetime")
@@ -142,6 +147,18 @@ class Figure
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    public function setGroup(Group $group): self
+    {
+        $this->group = $group;
 
         return $this;
     }

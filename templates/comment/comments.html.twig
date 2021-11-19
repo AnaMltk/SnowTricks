@@ -1,35 +1,31 @@
-<div>
-	<div class="container px-4 px-lg-5">
-		<div class="row gx-4 gx-lg-5 justify-content-center">
-			<div class="col-md-10 col-lg-8 col-xl-7">
-				{{ form_start(form)}}
+<div class="row justify-content-center" >
+	<div class="col-md-6">
+		{{ form_start(form)}}
 
 
-				<section>
-					<div class="card">
-						<div class="card-body">
-							{{ form_row (form.content) }}
-							{{ form_row (form.save)}}
-						</div>
-					</div>
-				</section>
-
-				{{ form_end(form) }}
-				<section>
-					{% for comment in figure.comments %}
-
-						<div class="card">
-							<div class="card-body">
-								<div class="fw-bold">2021-08-13 09:05:22</div>
-								<div class="fw-bold">Écrit par
-																					user</div>
-								<p class="text-center">{{comment.content}}</p>
-							</div>
-						</div>
-
-					{% endfor %}
-				</section>
+		<section>
+			<div class="card" id="commentForm">
+				<div class="card-body">
+					{{ form_row (form.content) }}
+					{{ form_row (form.save)}}
+				</div>
 			</div>
-		</div>
+		</section>
+
+		{{ form_end(form) }}
+		<section>
+			{% for comment in figure.comments %}
+
+				<div class="card" id="comments">
+					<div class="card-body">
+						<div class="fw-bold">2021-08-13 09:05:22</div>
+						<div class="fw-bold">Écrit par
+																																	user</div>
+						<p class="text-center">{{comment.content}}</p>
+					</div>
+				</div>
+
+			{% endfor %}
+		</section>
 	</div>
 </div>

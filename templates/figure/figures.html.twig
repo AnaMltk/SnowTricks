@@ -10,14 +10,24 @@
 					{% endif %}
 				{% endfor %}
 				<div class="card card-body border-0" id="figure">
-					<span class="d-flex align-items-center">
-						<a href='{{ path("getFigure", { id:figure.id, slug:figure.name|slug })}}'>{{figure.name}}</a>
-					</span>
+					<div class="row">
 
-					<a href='{{ path("edit", { id:figure.id, slug:figure.name|slug })}}'>
-						<i class="fa fa-pencil"></i>
-					</a>
-
+						<span class="d-flex align-items-center">
+							<div class="col">
+								<div class="card-text">
+									<a href='{{ path("getFigure", { id:figure.id, slug:figure.name|slug })}}'>{{figure.name}}</a>
+								</div>
+							</div>
+							<div class="col">
+								<div class="text-end">
+									<a href='{{ path("edit", { id:figure.id, slug:figure.name|slug })}}'>
+										<i class="fas fa-pen"></i>
+									</a>
+									<i class="far fa-trash-alt"></i>
+								</div>
+							</div>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>

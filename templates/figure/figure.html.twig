@@ -38,47 +38,46 @@
 
 						</div>
 					</div>
-				</div>
-
-			</section>
-			<br>
-			<p class="text-center">{{figure.description}}</p>
 
 
-			{{ include ("comment/comments.html.twig") }}
+				</section>
+				<br>
+				<p class="text-center">{{figure.description}}</p>
 
 
-			<div>
+				{{ include ("comment/comments.html.twig") }}
 
 
-				<div id="comments"></div>
 				{#<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>#}
+
+
 			</div>
 		</div>
 	</div>
 {% endblock %}
 {% block javascripts %}
-{{ parent() }}
-	{#}
-																									
-																									<script language="javascript">
-																										$(document).ready(function () {
-																						var offset = {{ maxComments }};
-																						$('#loadMoreComments').click(function () {
-																						
-																						$.ajax({
-																						url: '{{ path('loadMoreComments') }}' + '/' + offset,
-																						method: "GET"
-																						}).success(function (data) {
-																						$('#comments').append(data);
-																						offset += {{ maxComments }};
-																						if (offset >= {{ commentCount }}) {
-																						$('#comments').append('No more content');
-																						$('#loadMoreComments').hide();
-																						}
-																						})
-																						});
-																						
-																						});
-																						#}
-</script>{% endblock %}
+	{{ parent() }}
+	{#
+																																	
+																																	<script language="javascript">
+																																		$(document).ready(function () {
+																														var offset = {{ maxComments }};
+																														$('#loadMoreComments').click(function () {
+																														
+																														$.ajax({
+																														url: '{{ path('loadMoreComments') }}' + '/' + offset,
+																														method: "GET"
+																														}).success(function (data) {
+																														$('#comments').append(data);
+																														offset += {{ maxComments }};
+																														if (offset >= {{ commentCount }}) {
+																														$('#comments').append('No more content');
+																														$('#loadMoreComments').hide();
+																														}
+																														})
+																														});
+																														
+																														});
+																														</script>
+																														#}
+{% endblock %}
