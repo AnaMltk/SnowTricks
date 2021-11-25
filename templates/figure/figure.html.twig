@@ -9,7 +9,16 @@
 		<div class="container px-4 px-lg-5">
 			<div class="col col-md-12">
 				<section class="row">
-
+					{% if figure.photos is empty %}
+						<div class="wrapper col-md-12 col-sm-12">
+							<div class="card border-0">
+								<img class="img-fluid main-image" src="/img/placeholder.jpg">
+							</div>
+							<div class="overlay">
+								<h2 class="header">{{figure.name}}</h2>
+							</div>
+						</div>
+					{% endif %}
 					{% for photo in figure.photos %}
 						{% if loop.first %}
 							<div class="wrapper col-md-12 col-sm-12">
@@ -20,25 +29,32 @@
 									<h2 class="header">{{figure.name}}</h2>
 								</div>
 							</div>
+						{% else %}
+							
+							<div class="collapse no-collapse-lg" id="collapseExample">
+								<div class="col-md-4 col-sm-12">
+									<div class="card border-0 mt-2">
+										<img class="trick-image" src="{{ asset('img/'~photo.path) }}">
+									</div>
+								</div>
+							</div>
 
 						{% endif %}
-						<div class="col-md-4 col-sm-12">
-							<div class="card border-0 mt-2">
-								<img class="trick-image" src="{{ asset('img/'~photo.path) }}">
-							</div>
-						</div>
 
 					{% endfor %}
-					<div class="col-md-4 col-sm-12">
-						<div class="card border-0 mt-2">
+					<button class="btn btn-primary hidden visible-xs" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+								Button with data-target
+							</button>
+					{% for video in figure.videos %}
+						<div class="col-md-4 col-sm-12">
+							<div class="card border-0 mt-2">
+
+								<iframe class="embed-responsive" src="{{ video.link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
 
 
-							<iframe class="embed-responsive" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
-
-
+							</div>
 						</div>
-					</div>
-
+					{% endfor %}
 
 				</section>
 				<br>
@@ -57,27 +73,23 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	{#
-																																	
-																																	<script language="javascript">
-																																		$(document).ready(function () {
-																														var offset = {{ maxComments }};
-																														$('#loadMoreComments').click(function () {
-																														
-																														$.ajax({
-																														url: '{{ path('loadMoreComments') }}' + '/' + offset,
-																														method: "GET"
-																														}).success(function (data) {
-																														$('#comments').append(data);
-																														offset += {{ maxComments }};
-																														if (offset >= {{ commentCount }}) {
-																														$('#comments').append('No more content');
-																														$('#loadMoreComments').hide();
-																														}
-																														})
-																														});
-																														
-																														});
-																														</script>
-																														#}
+	<script>
+	$(document).ready(function () {
+
+  var click_count = 1
+   $('#load-more-comments').click(function () {
+     $.ajax({
+       url:'{{ path('load_more_comments') }}' + '/' + {{ figure.id }} + '/' + click_count,
+       method: 'get'
+     }).done(function (message) {
+     	$('#comments').append(message)
+     })
+     
+     click_count += 1
+     if (click_count >= {{ commentCount }}) {
+       $('#load-more-comments').hide()
+     }
+   })           
+})	
+</script>																																	
 {% endblock %}

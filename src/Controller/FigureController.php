@@ -12,6 +12,7 @@ use App\Form\VideoType;
 use App\Form\FigureType;
 use App\Form\CommentType;
 use App\Service\PhotoUploader;
+use App\Service\VideoUploader;
 use App\Repository\UserRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\VideoRepository;
@@ -67,6 +68,12 @@ class FigureController extends AbstractController
     {
         $figure = $figureRepository->find($id);
 
+        // Les 5 premiers commentaires
+        $comments = $commentRepository->findByFigure($id, ['creationDate' => 'DESC'], 1, 0);
+
+        // Nombre de commentaires au total
+        $commentCount = $commentRepository->count([]);
+
         /*$comments = $figure->getComments();
         $comments = $commentRepository->findBy([], ['creation_date' => 'DESC'], self::MAX_COMMENT, 0);
         $commentCount = $commentRepository->count([]);
@@ -74,7 +81,7 @@ class FigureController extends AbstractController
         $comment = new Comment();*/
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment, [
-            'action' => $this->generateUrl('newComment'),
+            'action' => $this->generateUrl('newComment', ['id'=>$id]),
             'method' => 'POST'
         ]);
 
@@ -92,14 +99,15 @@ class FigureController extends AbstractController
 
 
 
-        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView()]);
+        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView(), 'comments'=>$comments, 'commentCount'=>$commentCount]);
     }
 
     /**
      * @Route("/new", name="new")
      */
-    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, PhotoUploader $photoUploader): Response
+    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, PhotoUploader $photoUploader, VideoUploader $videoUploader): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $user = $userRepository->find(6);
         $figure = new Figure();
 
@@ -114,34 +122,32 @@ class FigureController extends AbstractController
             $figure->setModificationDate(new \DateTime());
 
             // Videos
-            $videos = $form->get('video')->getData();
-            foreach ($videos as $video) {
-                $figureVideo = new Video();
-                $figureVideo->setLink($video->getLink());
-                $figureVideo->setAlt($video->getAlt());
-                $figureVideo->setCreationDate(new \Datetime());
-                $figureVideo->setFigure($figure);
-                $entityManager->persist($figureVideo);
+            $videos = $form->get('video');
+            foreach ($videos as $videoData) {
+                $video = new Video();
+                $videoUploader->upload($entityManager, $videoData, $video, $figure);
             }
 
             // Photos
             $photos = $form->get('photo');
             foreach ($photos as $photoData) {
                 $photo = new Photo();
-                if ($photoUploader->upload($entityManager, $photoData, $photo, $figure)) {
+                /*if ($photoUploader->upload($entityManager, $photoData, $photo, $figure)) {
                     continue;
-                }
-                $error = 'Impossible d\'enrigistrer';
-                // $addPhoto->add($entityManager, $photoData, $photo, $figure);
+                }*/
+                //$error = 'Impossible d\'enrigistrer';
+                $photoUploader->upload($entityManager, $photoData, $photo, $figure);
             }
 
             $entityManager->persist($figure);
             $entityManager->flush();
+            $this->addFlash('success', 'Le figure a été creé avec success');
+            return $this->redirectToRoute('index');
         }
 
         return $this->renderForm('figure/newFigure.html.twig', [
             'form' => $form,
-            'error' => $error
+            //'error' => $error
         ]);
     }
 
@@ -150,6 +156,7 @@ class FigureController extends AbstractController
      */
     public function edit($id, FigureRepository $figureRepository, Request $request): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $figure = $figureRepository->find($id);
 
         $form = $this->createForm(FigureType::class, $figure);
@@ -167,10 +174,24 @@ class FigureController extends AbstractController
         return $this->render('figure/editFigure.html.twig', ['figure' => $figure, 'form' => $form->createView()]);
     }
     /**
+     * @Route("/delete/{id}", name="delete")
+     */
+    public function delete(Request $request, Figure $figure)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $entityManager = $this->getDoctrine()->getManager();
+        //$figure = $figureRepository->find($id);
+        $entityManager->remove($figure);
+        $entityManager->flush();
+        return $this->redirectToRoute('index');
+
+    }
+    /**
      * @Route("/edit_photo/{id}", name="edit_photo")
      */
     public function editPhoto($id, Request $request, PhotoRepository $photoRepository, PhotoUploader $photoUploader): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $error = '';
         $photo = $photoRepository->find($id);
         $form = $this->createForm(PhotoType::class, $photo);
@@ -191,6 +212,7 @@ class FigureController extends AbstractController
 
     public function editVideo($id, Request $request, VideoRepository $videoRepository): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $video = $videoRepository->find($id);
         $form = $this->createForm(VideoType::class, $video);
         $form->handleRequest($request);

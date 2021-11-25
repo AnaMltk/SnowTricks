@@ -1,8 +1,7 @@
-<div class="row justify-content-center" >
+<div class="row justify-content-center">
 	<div class="col-md-6">
-		{{ form_start(form)}}
-
-
+	{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+		{{ form_start(form) }}
 		<section>
 			<div class="card" id="commentForm">
 				<div class="card-body">
@@ -13,19 +12,33 @@
 		</section>
 
 		{{ form_end(form) }}
+		{% endif %}
 		<section>
-			{% for comment in figure.comments %}
-
+			{% for comment in comments %}
 				<div class="card" id="comments">
+
 					<div class="card-body">
-						<div class="fw-bold">2021-08-13 09:05:22</div>
-						<div class="fw-bold">Écrit par
-																																	user</div>
+						<div class="row">
+							<div class="col">
+								<img class="avatar" src="{{ asset('img/'~figure.user.avatar) }}">
+							</div>
+							<div class="col">
+								<div class="text-end">
+									<div class="fw-bold">2021-08-13 09:05:22</div>
+									<div class="fw-bold">Écrit par
+										{{ figure.user.email }}
+									</div>
+								</div>
+							</div>
+						</div>
 						<p class="text-center">{{comment.content}}</p>
 					</div>
 				</div>
 
 			{% endfor %}
+			<button type="button" class="btn btn-outline-dark" id="load-more-comments">Plus de commentaires</button>
 		</section>
 	</div>
 </div>
+
+

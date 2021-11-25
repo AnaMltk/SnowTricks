@@ -18,9 +18,9 @@ class PhotoUploader
             'img', 
             $figurePhotoFilename
         );
-        $size = getimagesize('img/'.$figurePhotoFilename);
+       /* $size = getimagesize('img/'.$figurePhotoFilename);
         return false;
-        dump($size); exit;
+        dump($size); exit;*/
         $photo->setPath($figurePhotoFilename);
         $photo->setAlt($photoData->get('alt')->getData());
         if (isset($figure)) {

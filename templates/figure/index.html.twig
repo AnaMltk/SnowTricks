@@ -28,6 +28,11 @@
 {% endblock %}
 
 {% block body %}
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success">
+			{{ message }}
+		</div>
+	{% endfor %}
 
 	<div class="container-fluid" id="tricks">
 
@@ -46,24 +51,24 @@
 	{{ parent() }}
 	<script language="javascript">
 		$(document).ready(function () {
-			var offset = {{ maxFigures }};
-			$('#loadMore').click(function () {
-				$('#loadMore').prop('disabled', true)
-				$.ajax({
-					url: '{{ path('loadMore') }}' + '/' + offset,
-					method: "GET",
-					success: function (data) {
-						$('#figures').append(data);
-						$('#loadMore').prop('disabled', false)
-						offset += {{ maxFigures }};
-						if (offset >= {{ figureCount }}) {
-							$('#figures').append('');
-							$('#loadMore').hide();
-						}
-					}
-				});
-			});
-		});
+var offset = {{ maxFigures }};
+$('#loadMore').click(function () {
+$('#loadMore').prop('disabled', true)
+$.ajax({
+url: '{{ path('loadMore') }}' + '/' + offset,
+method: "GET",
+success: function (data) {
+$('#figures').append(data);
+$('#loadMore').prop('disabled', false)
+offset += {{ maxFigures }};
+if (offset >= {{ figureCount }}) {
+$('#figures').append('');
+$('#loadMore').hide();
+}
+}
+});
+});
+});
 
 var hiddenElement = document.getElementById("tricks");
 var btn = document.querySelector('.btn');
@@ -73,6 +78,6 @@ hiddenElement.scrollIntoView({block: "center", behavior: "smooth"});
 }
 
 btn.addEventListener('click', handleButtonClick);
-</script>
+	</script>
 
 {% endblock %}

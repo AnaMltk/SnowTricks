@@ -3,47 +3,53 @@
 namespace App\Controller;
 
 
-use App\Repository\CommentRepository;
+use UserService;
+use App\Entity\User;
+use App\Entity\Figure;
 use App\Form\CommentType;
+use App\Repository\CommentRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CommentController extends AbstractController
 {
     const MAX_COMMENT = 1;
     /**
-     * @Route("/loadMoreComments/{offset}", name="loadMoreComments")
+     * @Route("/load-more-comments/{id}/{start}",name="load_more_comments")
      */
-    public function loadMoreComments(Request $request, CommentRepository $commentRepository, $offset = self::MAX_COMMENT)
+    public function load_more_comments(Request $request, CommentRepository $commentRepository, $start = 1, $id = 0)
     {
-
-
+        $comments = [];
         if ($request->isXmlHttpRequest()) {
-
-
-            $comments = $commentRepository->findBy([], ['creation_date' => 'DESC'], self::MAX_COMMENT, $offset);
+            $comments = $commentRepository->findByTrick($id, ['creationDate' => 'DESC'], 1, $start);
+            return $this->render(
+                'comment/comments.html.twig',
+                ['comments' => $comments]
+            );
         }
-
-        return $this->render('comment/comments.html.twig', ['comments' => $comments]);
+        return $this->render(
+            'empty.html.twig'
+        );
     }
-
     /**
-     * @Route("/newComment", name="newComment")
+     * @Route("newComment/{id}", name="newComment")
      */
-    public function newComment(Request $request)
+    public function newComment(Request $request, Figure $figure)
     {
         $form = $this->createForm(CommentType::class);
-
+        //$user = $userService->getLoggedUser();
+        $user = $this->getUser();
+        
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $comment = $form->getData();
-            //$comment->setFigure($figure);
-
+            $comment->setFigure($figure);
+            $comment->setUser($user);
             $comment->setCreationDate(new \DateTime());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($comment);
