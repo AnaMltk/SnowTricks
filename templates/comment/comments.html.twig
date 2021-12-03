@@ -1,44 +1,44 @@
 <div class="row justify-content-center">
 	<div class="col-md-6">
-	{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-		{{ form_start(form) }}
-		<section>
-			<div class="card" id="commentForm">
-				<div class="card-body">
-					{{ form_row (form.content) }}
-					{{ form_row (form.save)}}
+		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+			{{ form_start(form) }}
+			<section>
+				<div class="card" id="commentForm">
+					<div class="card-body">
+						{{ form_row (form.content) }}
+						{{ form_row (form.save)}}
+					</div>
 				</div>
-			</div>
-		</section>
+			</section>
 
-		{{ form_end(form) }}
+			{{ form_end(form) }}
 		{% endif %}
 		<section>
-			{% for comment in comments %}
-				<div class="card" id="comments">
+			<div id="comments">
+				{% for comment in comments %}
+					<div class="card">
 
-					<div class="card-body">
-						<div class="row">
-							<div class="col">
-								<img class="avatar" src="{{ asset('img/'~figure.user.avatar) }}">
-							</div>
-							<div class="col">
-								<div class="text-end">
-									<div class="fw-bold">2021-08-13 09:05:22</div>
-									<div class="fw-bold">Écrit par
-										{{ figure.user.email }}
+						<div class="card-body">
+							<div class="row">
+								<div class="col">
+									<img class="avatar" src="{{ asset('img/'~figure.user.avatar) }}">
+								</div>
+								<div class="col">
+									<div class="text-end">
+										<div class="fw-bold">2021-08-13 09:05:22</div>
+										<div class="fw-bold">Écrit par
+											{{ comment.user.email }}
+										</div>
 									</div>
 								</div>
 							</div>
+							<p class="text-center">{{comment.content}}</p>
 						</div>
-						<p class="text-center">{{comment.content}}</p>
 					</div>
-				</div>
 
-			{% endfor %}
+				{% endfor %}
+			</div>
 			<button type="button" class="btn btn-outline-dark" id="load-more-comments">Plus de commentaires</button>
 		</section>
 	</div>
 </div>
-
-

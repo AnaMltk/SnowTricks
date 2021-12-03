@@ -17,8 +17,8 @@ class Mailer
     public function sendEmail()
     {
         $email = (new Email())
-            ->from('ana.mlkv.92@google.com')
-            ->to('ana.mlkv.92@google.com')
+            ->from('anastasiamolotkova92@yandex.ru')
+            ->to('anastasiamolotkova92@yandex.ru')
             ->subject('Time for Symfony Mailer!')
             ->text('Sending emails is fun again!')
             ->html('<p>See Twig integration for better HTML integration!</p>');

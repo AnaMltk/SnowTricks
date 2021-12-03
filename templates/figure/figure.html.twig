@@ -5,91 +5,118 @@
 
 {% block body %}
 
-	<div class="container-fluid" id="tricks">
-		<div class="container px-4 px-lg-5">
-			<div class="col col-md-12">
-				<section class="row">
-					{% if figure.photos is empty %}
-						<div class="wrapper col-md-12 col-sm-12">
-							<div class="card border-0">
-								<img class="img-fluid main-image" src="/img/placeholder.jpg">
-							</div>
-							<div class="overlay">
-								<h2 class="header">{{figure.name}}</h2>
-							</div>
+	<div class="container px-4 px-lg-5" id="tricks">
+
+		<div class="col col-md-12">
+			<section class="row">
+				{% if figure.photos is empty %}
+					<div class="wrapper col-md-12 col-sm-12">
+						<div class="card border-0">
+							<img class="img-fluid main-image" src="/img/placeholder.jpg">
 						</div>
-					{% endif %}
+						<div class="overlay">
+							<h2 class="header">{{figure.name}}</h2>
+						</div>
+					</div>
+				{% endif %}
+				<div id="demo" class="carousel slide" data-bs-ride="carousel">
+
+					<div class="carousel-indicators">
+						{% for photo in figure.photos %}
+							{% if loop.first %}
+								<button type="button" data-bs-target="#demo" data-bs-slide-to="{{loop.index0}}" class="active"></button>
+							{% else %}
+								<button type="button" data-bs-target="#demo" data-bs-slide-to="{{loop.index0}}"></button>
+							{% endif %}
+						{% endfor %}
+					</div>
 					{% for photo in figure.photos %}
-						{% if loop.first %}
-							<div class="wrapper col-md-12 col-sm-12">
-								<div class="card border-0">
-									<img class="img-fluid main-image" src="{{ asset('img/'~photo.path) }}">
-								</div>
-								<div class="overlay">
-									<h2 class="header">{{figure.name}}</h2>
-								</div>
-							</div>
-						{% else %}
-							
-							<div class="collapse no-collapse-lg" id="collapseExample">
-								<div class="col-md-4 col-sm-12">
-									<div class="card border-0 mt-2">
-										<img class="trick-image" src="{{ asset('img/'~photo.path) }}">
-									</div>
-								</div>
-							</div>
+						{#}
+																									<div class="wrapper col-md-12 col-sm-12">
+																										<div class="card border-0">
+																											<img class="img-fluid main-image" src="{{ asset('img/'~photo.path) }}">
+																										</div>
+																										<div class="overlay">
+																											<h2 class="header">{{figure.name}}</h2>
+																										</div>
+																									</div>{#}
 
-						{% endif %}
 
-					{% endfor %}
-					<button class="btn btn-primary hidden visible-xs" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-								Button with data-target
-							</button>
-					{% for video in figure.videos %}
-						<div class="col-md-4 col-sm-12">
-							<div class="card border-0 mt-2">
+						<div class="carousel-inner">
 
-								<iframe class="embed-responsive" src="{{ video.link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+							<div class="carousel-item {% if loop.first %} active {% endif %}">
+
+								<img class="trick-image" src="{{ asset('img/'~photo.path) }}">
 
 
 							</div>
+
+
 						</div>
+
+
 					{% endfor %}
+					<!-- Left and right controls/icons -->
+					<button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon"></span>
+					</button>
+					<button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
+						<span class="carousel-control-next-icon"></span>
+					</button>
+				</div>
+				{% for video in figure.videos %}
 
-				</section>
-				<br>
-				<p class="text-center">{{figure.description}}</p>
+					<div class="col-md-4 col-sm-12">
+						<div class="card border-0 mt-2">
+
+							<iframe class="embed-responsive" src="{{ video.link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
 
 
-				{{ include ("comment/comments.html.twig") }}
+						</div>
+					</div>
 
+				{% endfor %}
 
-				{#<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>#}
-
-
+			</section>
+			<div class="d-lg-none d-flex justify-content-center">
+				<button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+					See Medias
+				</button>
 			</div>
+			<br>
+			<p class="text-center">{{figure.description}}</p>
+			<div class="d-flex justify-content-center">
+				<button type="#" class="btn btn-outline-dark" disabled>{{ figure.group.title }}</button>
+			</div>
+			<br>
+
+			{{ include ("comment/comments.html.twig") }}
+
+
+			{#<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>#}
+
+
 		</div>
 	</div>
 {% endblock %}
 {% block javascripts %}
-	{{ parent() }}
-	<script>
-	$(document).ready(function () {
+	{{ parent() }}<script>
+		$(document).ready(function () {
 
-  var click_count = 1
-   $('#load-more-comments').click(function () {
-     $.ajax({
-       url:'{{ path('load_more_comments') }}' + '/' + {{ figure.id }} + '/' + click_count,
-       method: 'get'
-     }).done(function (message) {
-     	$('#comments').append(message)
-     })
-     
-     click_count += 1
-     if (click_count >= {{ commentCount }}) {
-       $('#load-more-comments').hide()
-     }
-   })           
-})	
-</script>																																	
+var click_count = 1
+$('#load-more-comments').click(function () {
+const url = '{{ path('load_more_comments') }}' + '/' + {{ figure.id }} + '/' + click_count;
+console.log(url);
+$.ajax({url: url, method: 'get'}).done(function (message) {
+$('#comments').append(message)
+click_count += 1
+if (click_count >= {{ commentCount }}) {
+$('#load-more-comments').hide()
+}
+})
+})
+
+
+})
+	</script>
 {% endblock %}

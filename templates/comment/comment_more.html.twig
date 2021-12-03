@@ -1,0 +1,22 @@
+{% for comment in comments %}
+	<div class="card">
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col">
+					<img class="avatar" src="{{ asset('img/'~comment.figure.user.avatar) }}">
+				</div>
+				<div class="col">
+					<div class="text-end">
+						<div class="fw-bold">2021-08-13 09:05:22</div>
+						<div class="fw-bold">Écrit par
+							{{ comment.user.email }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<p class="text-center">{{comment.content}}</p>
+		</div>
+	</div>
+
+{% endfor %}

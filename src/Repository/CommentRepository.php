@@ -23,12 +23,13 @@ class CommentRepository extends ServiceEntityRepository
       * @return Comment[] Returns an array of Comment objects
       */
     
-    public function findByFigure($value)
+    public function findByFigure($value, $offset)
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.figure = :val')
             ->setParameter('val', $value)
             ->orderBy('c.id', 'ASC')
+            ->setFirstResult( $offset )
             ->setMaxResults(1)
             ->getQuery()
             ->getResult()

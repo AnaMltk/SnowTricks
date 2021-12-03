@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-
-use UserService;
 use App\Entity\User;
 use App\Entity\Figure;
 use App\Form\CommentType;
@@ -21,16 +19,21 @@ class CommentController extends AbstractController
     /**
      * @Route("/load-more-comments/{id}/{start}",name="load_more_comments")
      */
-    public function load_more_comments(Request $request, CommentRepository $commentRepository, $start = 1, $id = 0)
+    public function load_more_comments(Request $request, CommentRepository $commentRepository, $start = self::MAX_COMMENT, $id = 0)
     {
+        
         $comments = [];
-        if ($request->isXmlHttpRequest()) {
-            $comments = $commentRepository->findByTrick($id, ['creationDate' => 'DESC'], 1, $start);
+       // if ($request->isXmlHttpRequest()) {
+            $comments = $commentRepository->findByFigure($id, $start);
+           // dump($comments); exit;
             return $this->render(
-                'comment/comments.html.twig',
+                'comment/comment_more.html.twig',
                 ['comments' => $comments]
             );
-        }
+             
+            
+       // }
+      
         return $this->render(
             'empty.html.twig'
         );
@@ -41,7 +44,6 @@ class CommentController extends AbstractController
     public function newComment(Request $request, Figure $figure)
     {
         $form = $this->createForm(CommentType::class);
-        //$user = $userService->getLoggedUser();
         $user = $this->getUser();
         
         $form->handleRequest($request);

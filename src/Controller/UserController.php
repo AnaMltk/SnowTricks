@@ -55,7 +55,7 @@ class UserController extends AbstractController
 
             $user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPassword()));
 
-            $user->setRoles(['ROLE_ADMIN']);
+            $user->setRoles(['ROLE_USER']);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
@@ -91,8 +91,7 @@ class UserController extends AbstractController
      */
     public function forgotPassword(Request $request, TokenGeneratorInterface $tokenGenerator, Mailer $mailer): Response
     {
-        $mailer->sendEmail();
-        die;
+        
         //$userRepository = new UserRepository();
         $form = $this->createForm(ForgotPasswordType::class);
 

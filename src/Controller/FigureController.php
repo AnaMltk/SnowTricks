@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Photo;
 use App\Entity\Video;
+use App\Service\Slug;
 use App\Entity\Figure;
 use App\Entity\Comment;
 use App\Form\PhotoType;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -30,9 +32,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class FigureController extends AbstractController
 {
     const MAX_FIGURE = 5;
-
+   
     /**
+     * @param FigureRepository $figureRepository
      * @Route("/", name="index")
+     * @return Response
      */
     public function index(FigureRepository $figureRepository): Response
     {
@@ -67,39 +71,22 @@ class FigureController extends AbstractController
     public function getFigure($id, FigureRepository $figureRepository, Request $request, UserRepository $userRepository, CommentRepository $commentRepository): Response
     {
         $figure = $figureRepository->find($id);
-
+    
         // Les 5 premiers commentaires
-        $comments = $commentRepository->findByFigure($id, ['creationDate' => 'DESC'], 1, 0);
-
+        $comments = $commentRepository->findByFigure($id, 0);
+        
         // Nombre de commentaires au total
-        $commentCount = $commentRepository->count([]);
-
-        /*$comments = $figure->getComments();
-        $comments = $commentRepository->findBy([], ['creation_date' => 'DESC'], self::MAX_COMMENT, 0);
-        $commentCount = $commentRepository->count([]);
-        dump($comments);
-        $comment = new Comment();*/
+        $commentCount = count($commentRepository->findBy(['figure'=>$id]));
+        
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment, [
-            'action' => $this->generateUrl('newComment', ['id'=>$id]),
+            'action' => $this->generateUrl('newComment', ['id' => $id]),
             'method' => 'POST'
         ]);
 
         $form->handleRequest($request);
-        /*if ($form->isSubmitted() && $form->isValid()) {
-
-            $comment = $form->getData();
-            $comment->setFigure($figure);
-
-            $comment->setCreationDate(new \DateTime());
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($comment);
-            $entityManager->flush();
-        }*/
-
-
-
-        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView(), 'comments'=>$comments, 'commentCount'=>$commentCount]);
+    
+        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView(), 'comments' => $comments, 'commentCount' => $commentCount]);
     }
 
     /**
@@ -132,10 +119,6 @@ class FigureController extends AbstractController
             $photos = $form->get('photo');
             foreach ($photos as $photoData) {
                 $photo = new Photo();
-                /*if ($photoUploader->upload($entityManager, $photoData, $photo, $figure)) {
-                    continue;
-                }*/
-                //$error = 'Impossible d\'enrigistrer';
                 $photoUploader->upload($entityManager, $photoData, $photo, $figure);
             }
 
@@ -146,15 +129,14 @@ class FigureController extends AbstractController
         }
 
         return $this->renderForm('figure/newFigure.html.twig', [
-            'form' => $form,
-            //'error' => $error
+            'form' => $form
         ]);
     }
 
     /**
      * @Route("/edit/{id}-{slug}", name="edit")
      */
-    public function edit($id, FigureRepository $figureRepository, Request $request): Response
+    public function edit($id, FigureRepository $figureRepository, Request $request, EntityManagerInterface $entityManager, PhotoUploader $photoUploader, VideoUploader $videoUploader): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $figure = $figureRepository->find($id);
@@ -165,7 +147,19 @@ class FigureController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $figure->setModificationDate(new \DateTime());
-            $entityManager = $this->getDoctrine()->getManager();
+            // Videos
+            $videos = $form->get('video');
+            foreach ($videos as $videoData) {
+                $video = new Video();
+                $videoUploader->upload($entityManager, $videoData, $video, $figure);
+            }
+
+            // Photos
+            $photos = $form->get('photo');
+            foreach ($photos as $photoData) {
+                $photo = new Photo();
+                $photoUploader->upload($entityManager, $photoData, $photo, $figure);
+            }
 
             $entityManager->persist($figure);
             $entityManager->flush();
@@ -180,36 +174,52 @@ class FigureController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $entityManager = $this->getDoctrine()->getManager();
-        //$figure = $figureRepository->find($id);
         $entityManager->remove($figure);
         $entityManager->flush();
         return $this->redirectToRoute('index');
-
     }
     /**
      * @Route("/edit_photo/{id}", name="edit_photo")
      */
-    public function editPhoto($id, Request $request, PhotoRepository $photoRepository, PhotoUploader $photoUploader): Response
+    public function editPhoto(Photo $photo, Request $request, PhotoUploader $photoUploader, Slug $slug): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $error = '';
-        $photo = $photoRepository->find($id);
         $form = $this->createForm(PhotoType::class, $photo);
         $form->handleRequest($request);
         $entityManager = $this->getDoctrine()->getManager();
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($photoUploader->upload($entityManager, $form, $photo)) {
-                $entityManager->flush();
-                //TODO faire la redirection
-            }
-            $error = 'Impossible d\'enrigistrer';
+            $photoUploader->upload($entityManager, $form, $photo);
+            $entityManager->flush();
+            $figure_id = $form->getData()->getFigure()->getId();
+            $figure_name = $form->getData()->getFigure()->getName();
+           
+            return $this->redirectToRoute('getFigure', ['id' => $figure_id, 'slug'=>$slug->slugify($figure_name)]);
         }
+       
         return $this->renderForm('figure/editPhoto.html.twig', [
             'form' => $form,
-            'error' => $error
+            'error' => $error,
+            'figure' => $photo->getFigure()
         ]);
     }
+   
+    /**
+     * @Route("/delete_photo/{id}", name="delete_photo")
+     */
+    public function deletePhoto(Request $request, Photo $photo)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($photo);
+        $entityManager->flush();
+        $referer = $request->headers->get('referer');
+        return new RedirectResponse($referer);
+    }
 
+    /**
+     * @Route("/edit_video/{id}", name="edit_video")
+     */
     public function editVideo($id, Request $request, VideoRepository $videoRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -228,5 +238,18 @@ class FigureController extends AbstractController
         return $this->renderForm('figure/editPhoto.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    /**
+     * @Route("/delete_video/{id}", name="delete_video")
+     */
+    public function deleteVideo(Request $request, Video $video)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($video);
+        $entityManager->flush();
+        $referer = $request->headers->get('referer');
+        return new RedirectResponse($referer);
     }
 }

@@ -8,6 +8,7 @@
   background-size: cover;
   background-attachment: scroll;
 }
+
 .wrapper {
   display: inline-block;
   margin-top: 25px;
@@ -18,14 +19,25 @@
   display: block;
   max-width: 100%;
 }
-#scroll-down {
+.wrapper .edit {
   position: absolute;
+  top: 2px;
+  right: 25px;
+}
+#scroll-down {
   position: absolute;
   bottom: 8px;
   right: 16px;
 
   color: black;
 }
+#scroll-up {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: black;
+}
+
 h2.header {
   position: absolute;
   text-align: center;
@@ -85,6 +97,8 @@ a {
 }
 .img-fluid.main-image {
   width: 100%;
+  max-width: auto;
+  max-height: 600px;
   height: auto;
   object-fit: cover;
   position: relative;
@@ -101,8 +115,10 @@ iframe {
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  max-width: 100px;
+  max-height: 100px;
+  width: auto;
+  height: auto;
   object-fit: cover;
   position: relative;
 }
@@ -119,3 +135,21 @@ iframe {
     visibility: visible;
   }
 }
+
+@media screen and (min-width: 768px) {
+  .navbar-inverse {
+   display: none;
+  }
+}
+.custom-navbar-nav {
+  display: inline-block;
+}
+
+@media screen and (max-width: 768px) {
+  footer {
+   display: none;
+  }
+}
+
+
+

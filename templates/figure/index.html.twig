@@ -38,11 +38,17 @@
 
 
 		{{ include ("figure/figures.html.twig") }}
-
-
+		
 		<div class="text-center">
 			<button type="button" class="btn btn-outline-dark" id="loadMore">Voir plus</button>
+
 		</div>
+		<div>
+			<button type="button" class="btn" id="scroll-up">
+				<i class="fas fa-chevron-up"></i>
+			</button>
+		</div>
+
 	</div>
 {% endblock %}
 
@@ -71,10 +77,20 @@ $('#loadMore').hide();
 });
 
 var hiddenElement = document.getElementById("tricks");
-var btn = document.querySelector('.btn');
+var btn = document.querySelector('#scroll-down');
 
 function handleButtonClick() {
-hiddenElement.scrollIntoView({block: "center", behavior: "smooth"});
+hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
+}
+
+btn.addEventListener('click', handleButtonClick);
+
+var hiddenElement = document.getElementById("tricks");
+
+var btn = document.querySelector('#scroll-up');
+
+function handleButtonClick() {
+hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
 }
 
 btn.addEventListener('click', handleButtonClick);
