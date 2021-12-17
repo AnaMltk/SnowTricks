@@ -17,7 +17,12 @@ class ResetPasswordType extends AbstractType
     {
         $builder
 
-            ->add('password', PasswordType::class);
+            ->add('password', PasswordType::class)
+            ->add('save', SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-outline-secondary text-uppercase',
+                ]
+            ]);;
     }
     public function configureOptions(OptionsResolver $resolver)
     {

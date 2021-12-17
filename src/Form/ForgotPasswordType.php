@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 
 class ForgotPasswordType extends AbstractType
@@ -17,7 +17,12 @@ class ForgotPasswordType extends AbstractType
     {
         $builder
 
-            ->add('email', RepeatedType::class);
+            ->add('email', TextType::class)
+            ->add('save', SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-outline-secondary text-uppercase',
+                ]
+            ]);;
     }
     public function configureOptions(OptionsResolver $resolver)
     {

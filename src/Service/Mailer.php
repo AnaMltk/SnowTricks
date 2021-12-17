@@ -14,14 +14,13 @@ class Mailer
     {
         $this->mailer = $mailer;
     }
-    public function sendEmail()
+    public function sendEmail($receiver, $subject, $text)
     {
         $email = (new Email())
             ->from('anastasiamolotkova92@yandex.ru')
-            ->to('anastasiamolotkova92@yandex.ru')
-            ->subject('Time for Symfony Mailer!')
-            ->text('Sending emails is fun again!')
-            ->html('<p>See Twig integration for better HTML integration!</p>');
+            ->to($receiver)
+            ->subject($subject)
+            ->text($text);
 
         $this->mailer->send($email);
     }

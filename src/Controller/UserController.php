@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\ForgotPasswordType;
 use App\Form\UserType;
-use App\Repository\UserRepository;
 use App\Service\Mailer;
+use App\Form\ForgotPasswordType;
+use App\Form\ResetPasswordType;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -76,38 +78,44 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/getLoggedUser", name="logged_user")
-     */
-    public function getLoggedUser()
-    {
-
-        $user = $this->getUser();
-
-        return new Response('Well hi there ' . $user->getEmail());
-    }
-
-    /**
      * @Route("/forgotPassword", name="forgotPassword")
      */
-    public function forgotPassword(Request $request, TokenGeneratorInterface $tokenGenerator, Mailer $mailer): Response
+    public function forgotPassword(Request $request, TokenGeneratorInterface $tokenGenerator, Mailer $mailer, UserRepository $userRepository, UrlGeneratorInterface $urlGenerator): Response
     {
-        
-        //$userRepository = new UserRepository();
+       
+        $subject = 'Modification de mot de passe';
+        $text = 'Cliquez sur le lien pour modifier votre mot de passe ';
         $form = $this->createForm(ForgotPasswordType::class);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            //$user = $userRepository->findOneBy(['email' => $form['email']->getData()]);
-            $token = $tokenGenerator->generateToken();
-            $mailer->sendEmail();
+            $user = $userRepository->findOneBy(['email' => $form['email']->getData()]);
+            if($user){
+                $receiver = $user->getEmail();
+                $token = $tokenGenerator->generateToken();
+                $url = $urlGenerator->generate('resetPassword', array('token' => $token), UrlGeneratorInterface::ABSOLUTE_URL);
+                $text = $text.' '.$url;
+                $user->setToken($token);
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $mailer->sendEmail($receiver, $subject, $text);
+                $this->addFlash('reinitialisation', 'Le mail a été envoyé');
+            } else {
+                $this->addFlash('failure', 'L\'Utilisateur n\'existe pas');
+                
+            }
+           
         }
-        return $this->renderForm('user/newUser.html.twig', [
+        return $this->renderForm('user/forgotPassword.html.twig', [
             'form' => $form,
         ]);
     }
 
-    public function resetPassword(Request $request): Response
+    /**
+     * @Route("/resetPassword/{token}", name="resetPassword")
+     */
+    public function resetPassword(Request $request, string $token, UserRepository $userRepository): Response
     {
 
         $form = $this->createForm(ResetPasswordType::class);
@@ -115,10 +123,19 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash('success', 'Le mot de pass a été modifié avec success');
+            $user = $userRepository->findOneBy(['token'=>$token]);
+            if($user === null ){
+                $this->addFlash('danger', 'Invalid token');
+                return $this->redirectToRoute('index');
+            }
+            $user->setToken(null);
+            $user->setPassword($this->passwordEncoder->encodePassword($user, $form['password']->getData()));
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+            $this->addFlash('notice', 'Le mot de pass a été modifié avec success');
+            return $this->redirectToRoute('login');
         }
-        return $this->renderForm('user/newUser.html.twig', [
+        return $this->renderForm('user/resetPassword.html.twig', [
             'form' => $form,
         ]);
     }
