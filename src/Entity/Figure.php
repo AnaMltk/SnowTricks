@@ -4,9 +4,9 @@ namespace App\Entity;
 
 use App\Entity\Group;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\FigureRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -48,7 +48,8 @@ class Figure
 
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank
      */
     private $name;
 
@@ -59,11 +60,12 @@ class Figure
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Group",inversedBy="figure")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $group;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=false)
      */
     private $creation_date;
 
