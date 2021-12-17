@@ -41,6 +41,13 @@ class PhotoFixture extends Fixture implements DependentFixtureInterface
         $photo4->setFigure($this->getReference(FigureFixture::FIGURE_4));
         $manager->persist($photo4);
 
+        $photo5 = new Photo();
+        $photo5->setPath('img4.jpeg');
+        $photo5->setAlt('img4');
+        $photo5->setCreationDate(new DateTime());
+        $photo5->setFigure($this->getReference(FigureFixture::FIGURE_1));
+        $manager->persist($photo5);
+
         $manager->flush();
     }
     public function getDependencies()
