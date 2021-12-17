@@ -16,9 +16,19 @@ class CommentType extends AbstractType
     {
         $builder
 
-            ->add('content', TextType::class)
+            ->add('content', TextType::class, [
+                'attr' => [
+                    'placeholder' => 'Comment',
+                ],
+                'row_attr' => [
+                    'class' => 'form-floating',
+                ]])
 
-            ->add('save', SubmitType::class);
+            ->add('save', SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-outline-secondary text-uppercase',
+                ]
+            ]);
     }
     public function configureOptions(OptionsResolver $resolver)
     {

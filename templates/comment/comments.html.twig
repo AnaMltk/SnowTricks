@@ -1,11 +1,50 @@
-{#{{ form_start(form)}}
-{{ form_row(form.content)}}
+<div class="row justify-content-center">
+	<div class="col-md-6">
+		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+			{{ form_start(form) }}
+			<section>
+				<div class="card" id="commentForm">
+					<div class="card-body">
+						{{ form_row (form.content) }}
+						{{ form_row (form.save)}}
+					</div>
+				</div>
+			</section>
 
-{{ form_end(form) }}
-#}
+			{{ form_end(form) }}
+		{% endif %}
+		<section>
+			<div id="comments">
+				{% for comment in comments %}
+					<div class="card">
 
-{% for comment in figure.comments %}
-	<ul>
-		<li>{{comment.content}}</li>
-	</ul>
-{% endfor %}
+						<div class="card-body">
+							<div class="row">
+								<div class="col">
+									{% if figure.user.avatar is empty %}
+
+										<img class="avatar" src="/img/placeholder.jpg">
+
+									{% else %}
+										<img class="avatar" src="{{ asset('img/'~figure.user.avatar) }}">
+									{% endif %}
+								</div>
+								<div class="col">
+									<div class="text-end">
+										<div class="fw-bold">{{ comment.creationDate|date('d/m/Y H:i') }}</div>
+										<div class="fw-bold">Écrit par
+											{{ comment.user.email }}
+										</div>
+									</div>
+								</div>
+							</div>
+							<p class="text-center">{{comment.content}}</p>
+						</div>
+					</div>
+
+				{% endfor %}
+			</div>
+			<button type="button" class="btn btn-outline-dark" id="load-more-comments">Plus de commentaires</button>
+		</section>
+	</div>
+</div>

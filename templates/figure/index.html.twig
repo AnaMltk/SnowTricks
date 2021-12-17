@@ -3,20 +3,52 @@
 {% block title %}Hello FigureController!
 {% endblock %}
 
-{% block body %}
+{% block header %}
+	<header class="header-img" style="background-image: url('/img/header.jpg')">
+		<div class="container position-relative px-4 px-lg-5">
+			<div class="row gx-4 gx-lg-5 justify-content-center">
+				<div class="col-md-12 col-lg-8 col-xl-7">
+					<div class="site-heading">
+						<h1 class="text-center" id="title">SNOW TRICKS</h1>
+						<h2 class="text-center" id="slogan">Snow must go on</h2>
+					</div>
+				</div>
 
-	<div class="container-fluid">
-		<h1 class="text-center title">Page d'accueil</h1>
+			</div>
 
-
-		<div class="row" id="figures">
-
-			{{ include ("figure/figures.html.twig") }}
 
 		</div>
 
+		<button type="button" class="btn position-absolute" id="scroll-down">
+			<i class="fas fa-chevron-down"></i>
+		</button>
+	</header>
 
-		<button type="button" class="btn btn-primary" id="loadMore">Voir plus</button>
+
+{% endblock %}
+
+{% block body %}
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success">
+			{{ message }}
+		</div>
+	{% endfor %}
+
+	<div class="container-fluid" id="tricks">
+
+
+		{{ include ("figure/figures.html.twig") }}
+		
+		<div class="text-center">
+			<button type="button" class="btn btn-outline-dark" id="loadMore">Voir plus</button>
+
+		</div>
+		<div>
+			<button type="button" class="btn" id="scroll-up">
+				<i class="fas fa-chevron-up"></i>
+			</button>
+		</div>
+
 	</div>
 {% endblock %}
 
@@ -27,20 +59,41 @@
 		$(document).ready(function () {
 var offset = {{ maxFigures }};
 $('#loadMore').click(function () {
-
+$('#loadMore').prop('disabled', true)
 $.ajax({
 url: '{{ path('loadMore') }}' + '/' + offset,
-method: "GET"
-}).success(function (data) {
+method: "GET",
+success: function (data) {
 $('#figures').append(data);
+$('#loadMore').prop('disabled', false)
 offset += {{ maxFigures }};
 if (offset >= {{ figureCount }}) {
-$('#figures').append('No more content');
+$('#figures').append('');
 $('#loadMore').hide();
 }
-})
+}
+});
+});
 });
 
-});
+var hiddenElement = document.getElementById("tricks");
+var btn = document.querySelector('#scroll-down');
+
+function handleButtonClick() {
+hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
+}
+
+btn.addEventListener('click', handleButtonClick);
+
+var hiddenElement = document.getElementById("tricks");
+
+var btn = document.querySelector('#scroll-up');
+
+function handleButtonClick() {
+hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
+}
+
+btn.addEventListener('click', handleButtonClick);
 	</script>
+
 {% endblock %}

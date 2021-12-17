@@ -1,19 +1,44 @@
-{% for figure in figures %}
-	<div class="col col-md-4 col-sm-12">
-		<div class="card border-0">
-			<span class="text-center">
-				{{figure.name}}
-				<br>
-				<a href='{{ path("getFigure", { id:figure.id, slug:figure.name|slug })}}'>Figure</a>
-				<a href='{{ path("edit", { id:figure.id, slug:figure.name|slug })}}'>Edit</a>
-				<br>
-				{{figure.description}}</span>
+<div class="row d-flex justify-content-center" id="figures">
+	{% for figure in figures %}
 
-			{% for photo in figure.photos %}
-				{% if loop.first %}
-					<img src="{{ asset('img/'~photo.path) }}">
+		<div class="col-lg-2 col-md-6">
+			<div class="card border-0 mt-2">
+				{% if figure.photos is empty %}
+					<img class="card-img-topx trick-image" src="img/placeholder.jpg">
 				{% endif %}
-			{% endfor %}
+				{% for photo in figure.photos %}
+					{% if loop.first %}
+						<img class="card-img-topx trick-image" src="{{ asset('img/'~photo.path) }}">
+					{% endif %}
+
+				{% endfor %}
+				<div class="card card-body border-0" id="figure">
+					<div class="row">
+
+						<span class="d-flex align-items-center">
+							<div class="col">
+								<div class="card-text">
+									<a href='{{ path("getFigure", { 'id':figure.id, slug:figure.name|slug })}}'>{{figure.name}}</a>
+								</div>
+							</div>
+							<div class="col">
+								<div class="text-end">
+									{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+										<a href='{{ path("edit", { 'id':figure.id, slug:figure.name|slug })}}'>
+											<i class="fas fa-pen"></i>
+										</a>
+										<a href='{{ path("delete", {'id':figure.id}) }}' onclick="return confirm('are you sure?')">
+											<i class="far fa-trash-alt"></i>
+										</a>
+									{% endif %}
+								</div>
+							</div>
+						</span>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
-{% endfor %}
+
+	{% endfor %}
+	
+</div>

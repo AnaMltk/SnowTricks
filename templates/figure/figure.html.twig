@@ -5,75 +5,127 @@
 
 {% block body %}
 
+	<div class="container px-4 px-lg-5" id="tricks">
 
-	<div class="container px-4 px-lg-5">
 		<div class="col col-md-12">
-			<h1>Figure Page</h1>
-			{{figure.name}}
-			<br>
 			<section class="row">
+				{% if figure.photos is empty %}
+					<div class="wrapper col-md-12 col-sm-12">
+						<div class="card border-0">
+							<img class="img-fluid main-image" src="/img/placeholder.jpg">
+						</div>
+						<div class="overlay">
+							<h2 class="header">{{figure.name}}</h2>
+						</div>
+					</div>
+				{% endif %}
 
 				{% for photo in figure.photos %}
 					{% if loop.first %}
-						<div class="col-md-12 col-sm-12">
+						<div class="wrapper col-md-12 col-sm-12">
 							<div class="card border-0">
-								<img src="{{ asset('img/'~photo.path) }}">
+								<img class="img-fluid main-image" src="{{ asset('img/'~photo.path) }}" alt="">
+							</div>
+							<div class="overlay">
+								<h2 class="header">{{figure.name|upper}}</h2>
 							</div>
 						</div>
-
 					{% endif %}
-					<div class="col-md-4 col-sm-12">
-						<div class="card border-0">
-							<img src="{{ asset('img/'~photo.path) }}">
+				{% endfor %}
+				<div class="collapse no-collapse-lg" id="collapseExample">
+					<div class="row">
+						<div class="col-lg-6 col-md-12">
+
+							<div id="carousel" class="carousel slide mt-3 mb-2" data-ride="carousel">
+								<ol class="carousel-indicators">
+									{% for photo in figure.photos %}
+										<li data-bs-target=".carousel" data-bs-slide-to="{{ loop.index0 }}" {% if loop.index0 == 0 %} class="active" {% endif %}></li>
+									{% endfor %}
+								</ol>
+
+								<div class="carousel-inner">
+									{% for photo in figure.photos %}
+										<div class="carousel-item {% if loop.index0 == 0 %} active {% endif %}">
+											<img class="trick-image" src="{{ asset('img/'~photo.path) }}">
+										</div>
+									{% endfor %}
+								</div>
+								<a class="carousel-control-prev" href="#carousel" data-bs-slide="prev">
+									<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								</a>
+								<a class="carousel-control-next" href="#carousel" data-bs-slide="next">
+									<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								</a>
+
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-12">
+
+							<div id="carousel-video" class="carousel slide mt-3 mb-2" data-ride="carousel-video">
+								<ol class="carousel-indicators">
+									{% for video in figure.videos %}
+										<li data-bs-target=".carousel-video" data-bs-slide-to="{{ loop.index0 }}" {% if loop.index0 == 0 %} class="active" {% endif %}></li>
+									{% endfor %}
+								</ol>
+								<div class="carousel-inner">
+									{% for video in figure.videos %}
+										<div class="carousel-item {% if loop.index0 == 0 %} active {% endif %}">
+											<iframe class="embed-responsive" src="{{ video.link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+										</div>
+									{% endfor %}
+								</div>
+								<a class="carousel-control-prev" href="#carousel-video" data-bs-slide="prev">
+									<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								</a>
+								<a class="carousel-control-next" href="#carousel-video" data-bs-slide="next">
+									<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								</a>
+							</div>
+
 						</div>
 					</div>
-
-				{% endfor %}
-				<div class="col-md-4 col-sm-12">
-					<div class="card border-0 h-100">
-
-
-						<iframe style="height:inherit" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
-
-
-					</div>
 				</div>
+			</section>
+			<div class="d-lg-none d-flex justify-content-center">
+				<button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+					See Medias
+				</button>
 			</div>
-
-		</section>
-
-		<div>
-
-
-			<div id="comments">
-				{{ include ("comment/comments.html.twig") }}
+			<br>
+			<p class="text-center">{{figure.description}}</p>
+			<div class="d-flex justify-content-center">
+				<button type="#" class="btn btn-outline-dark" disabled>{{ figure.group.title }}</button>
 			</div>
-			<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>
+			<br>
 
-		{% endblock %}
+			{{ include ("comment/comments.html.twig") }}
 
-		{% block javascripts %}
-			{#}
-															{{ parent() }}
-															<script language="javascript">
-																$(document).ready(function () {
-												var offset = {{ maxComments }};
-												$('#loadMoreComments').click(function () {
-												
-												$.ajax({
-												url: '{{ path('loadMoreComments') }}' + '/' + offset,
-												method: "GET"
-												}).success(function (data) {
-												$('#comments').append(data);
-												offset += {{ maxComments }};
-												if (offset >= {{ commentCount }}) {
-												$('#comments').append('No more content');
-												$('#loadMoreComments').hide();
-												}
-												})
-												});
-												
-												});
-												#}
-		</script>
-	{% endblock %}
+
+			{#<button type="button" class="btn btn-primary" id="loadMoreComments">Voir plus</button>#}
+
+
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}<script>
+		$(document).ready(function () {
+
+var click_count = 1
+$('#load-more-comments').click(function () {
+const url = '{{ path('load_more_comments') }}' + '/' + {{ figure.id }} + '/' + click_count;
+console.log(url);
+$.ajax({url: url, method: 'get'}).done(function (message) {
+$('#comments').append(message)
+click_count += 1
+if (click_count >= {{ commentCount }}) {
+$('#comments').append('');
+$('#load-more-comments').hide()
+}
+})
+})
+
+
+})
+	</script>
+{% endblock %}

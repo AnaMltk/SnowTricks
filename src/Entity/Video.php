@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\VideoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -48,7 +47,7 @@ class Video
         return $this->figure;
     }
 
-    public function setFigure(string $figure): self
+    public function setFigure($figure): self
     {
         $this->figure = $figure;
 

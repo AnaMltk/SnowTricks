@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\FigureRepository;
+use App\Entity\Group;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=FigureRepository::class)
+ * @UniqueEntity(
+ *  fields="name",
+ *  message="Figure avec ce nom existe déjà"
+ * )
  */
 class Figure
 {
@@ -42,7 +48,8 @@ class Figure
 
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank
      */
     private $name;
 
@@ -51,9 +58,14 @@ class Figure
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Group",inversedBy="figure")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $group;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=false)
      */
     private $creation_date;
 
@@ -142,6 +154,18 @@ class Figure
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    public function setGroup(Group $group): self
+    {
+        $this->group = $group;
 
         return $this;
     }

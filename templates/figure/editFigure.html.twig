@@ -4,47 +4,129 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container px-4 px-lg-5">
-		<div class="col col-md-12">
-			<h1>Figure Page</h1>
-			{{figure.name}}
-			<br>
-			<section class="row">
-
-				{% for photo in figure.photos %}
-					{% if loop.first %}
-						<div class="col-md-12 col-sm-12">
+	<div class="container-fluid" id="tricks">
+		<div class="container px-4 px-lg-5">
+			<div class="col col-md-12">
+				<section class="row">
+					{% if figure.photos is empty %}
+						<div class="wrapper col-md-12 col-sm-12">
 							<div class="card border-0">
-								<img src="{{ asset('img/'~photo.path) }}">
+								<img class="img-fluid main-image" src="/img/placeholder.jpg">
+							</div>
+							<div class="overlay">
+								<h2 class="header">{{figure.name}}</h2>
+							</div>
+						</div>
+					{% endif %}
+					{% for photo in figure.photos %}
+						{% if loop.first %}
+							<div class="wrapper col-md-12 col-sm-12">
+								<div class="card border-0">
+									<img class="img-fluid main-image" src="{{ asset('img/'~photo.path) }}">
+								</div>
+								<div class="overlay">
+									<h2 class="header">{{figure.name}}</h2>
+								</div>
+								<span class="edit">
+									<a href='{{ path("edit_photo", { 'id':photo.id})}}'>
+										<i class="fas fa-pen"></i>
+									</a>
+									<a href='{{ path("delete_photo", {'id':photo.id}) }}' onclick="return confirm('are you sure?')">
+										<i class="far fa-trash-alt"></i>
+									</a>
+								</span>
+							</div>
+
+						{% endif %}
+						<div class="col-md-4 col-sm-12">
+							<div class="card border-0 mt-2" id="figure">
+
+								<img class="card-img-topx trick-image trick-image" src="{{ asset('img/'~photo.path) }}">
+								<div class="card-text">
+									<div class="text-end">
+										<a href='{{ path("edit_photo", { 'id':photo.id})}}'>
+											<i class="fas fa-pen"></i>
+										</a>
+										<a href='{{ path("delete_photo", {'id':photo.id}) }}' onclick="return confirm('are you sure?')">
+											<i class="far fa-trash-alt"></i>
+										</a>
+									</div>
+								</div>
 							</div>
 						</div>
 
-					{% endif %}
-					<div class="col-md-4 col-sm-12">
-						<div class="card border-0">
-							<a href='{{ path("edit_photo", { id:photo.id})}}'>Edit photo</a>
-							<img src="{{ asset('img/'~photo.path) }}">
+					{% endfor %}
+					{% for video in figure.videos %}
+						<div class="col-md-4 col-sm-12">
+							<div class="card border-0 mt-2">
+
+								<iframe class="embed-responsive" src="{{ video.link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+								<div class="text-end">
+									<a href='{{ path("edit_video", { 'id':video.id})}}'>
+										<i class="fas fa-pen"></i>
+									</a>
+									<a href='{{ path("delete_video", {'id':video.id}) }}' onclick="return confirm('are you sure?')">
+										<i class="far fa-trash-alt"></i>
+									</a>
+								</div>
+
+							</div>
 						</div>
-					</div>
+					{% endfor %}
 
-				{% endfor %}
-				<div class="col-md-4 col-sm-12">
-					<div class="card border-0 h-100">
+				</section>
+				<div class="container">
+					<div class="row justify-content-center">
+						<div class="col-md-6">
+							{{ form_start(form)}}
+							{{ form_row(form.name)}}
+							{{ form_row(form.description)}}
+							<div id="photos" class="photos" data-prototype="{{ form_widget(form.photo.vars.prototype)|e('html_attr') }}">
+								{{ form_widget(form.photo) }}
+							</div>
+							<button id="add-photo" class="btn btn-outline-secondary text-uppercase add-photo" type="button" data-collection-holder-class="photos">Add a photo</button>
 
+							<input type="hidden" id="photo-counter" value="0">
 
-						<iframe style="height:inherit" src="https://www.youtube.com/embed/monyw0mnLZg"></iframe>
+							<div id="videos" class="videos" data-prototype="{{ form_widget(form.video.vars.prototype)|e('html_attr') }}">
+								{{ form_widget(form.video) }}
+							</div>
 
+							<button id="add-video" class="btn btn-outline-secondary text-uppercase add-video" type="button" data-collection-holder-class="videos">Add a video</button>
+							<input type="hidden" id="video-counter" value="0">
 
+							{{ form_end(form)}}
+						</div>
 					</div>
 				</div>
 			</div>
-
-		</section>
-
-		{{ form_start(form)}}
-		{{ form_row(form.name)}}
-		{{ form_row(form.description)}}
+		</div>
+	</div>
 
 
-		{{ form_end(form)}}
-	{% endblock %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		$(document).ready(function () {
+$('#add-photo').on('click', function (e) {
+const index = + $('#photo-counter').val();
+const tmpl = $('.photos').data('prototype').replace(/__name__/g, index);
+
+$('#photo-counter').val(index + 1);
+$('#photos').append(tmpl);
+});
+})
+
+$(document).ready(function () {
+$('#add-video').on('click', function (e) {
+const index = + $('#video-counter').val();
+const tmpl = $('.videos').data('prototype').replace(/__name__/g, index);
+$('#video-counter').val(index + 1);
+$('#videos').append(tmpl);
+
+});
+})
+	</script>
+{% endblock %}
