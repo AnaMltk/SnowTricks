@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Photo;
 use App\Entity\Video;
 use App\Service\Slug;
@@ -15,7 +14,6 @@ use App\Form\CommentType;
 use App\Service\PhotoUploader;
 use App\Service\VideoUploader;
 use App\Repository\UserRepository;
-use App\Repository\PhotoRepository;
 use App\Repository\VideoRepository;
 use App\Repository\FigureRepository;
 use App\Repository\CommentRepository;
@@ -23,7 +21,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -34,16 +31,15 @@ class FigureController extends AbstractController
     const MAX_FIGURE = 5;
    
     /**
-     * @param FigureRepository $figureRepository
      * @Route("/", name="index")
+     * @param FigureRepository $figureRepository
+     * 
      * @return Response
      */
     public function index(FigureRepository $figureRepository): Response
     {
         $figureCount = $figureRepository->count([]);
         $figures = $figureRepository->findBy([], ['creation_date' => 'DESC'], self::MAX_FIGURE, 0);
-
-        //dump($figures);
 
         return $this->render('figure/index.html.twig', ['figures' => $figures, 'figureCount' => $figureCount, 'maxFigures' => self::MAX_FIGURE]);
     }
@@ -53,9 +49,7 @@ class FigureController extends AbstractController
     public function loadMore(Request $request, FigureRepository $figureRepository, $offset = self::MAX_FIGURE)
     {
 
-
         if ($request->isXmlHttpRequest()) {
-
 
             $figures = $figureRepository->findBy([], ['creation_date' => 'DESC'], self::MAX_FIGURE, $offset);
         }
@@ -63,17 +57,22 @@ class FigureController extends AbstractController
         return $this->render('figure/figures.html.twig', ['figures' => $figures]);
     }
 
-
-
     /**
      * @Route("/figure/{id}-{slug}", name="getFigure")
+     * @param mixed $id
+     * @param FigureRepository $figureRepository
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param CommentRepository $commentRepository
+     * 
+     * @return Response
      */
-    public function getFigure($id, FigureRepository $figureRepository, Request $request, UserRepository $userRepository, CommentRepository $commentRepository): Response
+    public function getFigure($id, FigureRepository $figureRepository, Request $request, CommentRepository $commentRepository): Response
     {
         $figure = $figureRepository->find($id);
     
         // Les 5 premiers commentaires
-        $comments = $commentRepository->findByFigure($id, 0);
+        $comments = $commentRepository->findByFigure($id, 0, 1);
         
         // Nombre de commentaires au total
         $commentCount = count($commentRepository->findBy(['figure'=>$id]));
@@ -86,7 +85,7 @@ class FigureController extends AbstractController
 
         $form->handleRequest($request);
     
-        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView(), 'comments' => $comments, 'commentCount' => $commentCount]);
+        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView(), 'comments'=>$comments, 'commentCount' => $commentCount]);
     }
 
     /**
@@ -95,11 +94,10 @@ class FigureController extends AbstractController
     public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, PhotoUploader $photoUploader, VideoUploader $videoUploader): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $user = $userRepository->find(6);
+        $user = $this->getUser();
         $figure = new Figure();
 
         $form = $this->createForm(FigureType::class, $figure);
-        $error = '';
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // General
@@ -153,7 +151,6 @@ class FigureController extends AbstractController
                 $video = new Video();
                 $videoUploader->upload($entityManager, $videoData, $video, $figure);
             }
-
             // Photos
             $photos = $form->get('photo');
             foreach ($photos as $photoData) {
@@ -229,7 +226,6 @@ class FigureController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         if ($form->isSubmitted() && $form->isValid()) {
             $videoData = $form->get('link')->getData();
-
             $video->setLink($videoData);
             $video->setAlt($form->get('alt')->getData());
             $entityManager->persist($video);
