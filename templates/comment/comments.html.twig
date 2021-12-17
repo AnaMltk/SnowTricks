@@ -21,11 +21,17 @@
 						<div class="card-body">
 							<div class="row">
 								<div class="col">
-									<img class="avatar" src="{{ asset('img/'~figure.user.avatar) }}">
+									{% if figure.user.avatar is empty %}
+
+										<img class="avatar" src="/img/placeholder.jpg">
+
+									{% else %}
+										<img class="avatar" src="{{ asset('img/'~figure.user.avatar) }}">
+									{% endif %}
 								</div>
 								<div class="col">
 									<div class="text-end">
-										<div class="fw-bold">2021-08-13 09:05:22</div>
+										<div class="fw-bold">{{ comment.creationDate|date('d/m/Y H:i') }}</div>
 										<div class="fw-bold">Écrit par
 											{{ comment.user.email }}
 										</div>

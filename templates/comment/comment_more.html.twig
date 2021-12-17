@@ -4,7 +4,13 @@
 		<div class="card-body">
 			<div class="row">
 				<div class="col">
-					<img class="avatar" src="{{ asset('img/'~comment.figure.user.avatar) }}">
+					{% if comment.figure.user.avatar is empty %}
+
+						<img class="avatar" src="/img/placeholder.jpg">
+
+					{% else %}
+						<img class="avatar" src="{{ asset('img/'~comment.figure.user.avatar) }}">
+					{% endif %}
 				</div>
 				<div class="col">
 					<div class="text-end">

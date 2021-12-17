@@ -113,7 +113,7 @@
 $('#add-photo').on('click', function (e) {
 const index = + $('#photo-counter').val();
 const tmpl = $('.photos').data('prototype').replace(/__name__/g, index);
-console.log($('.photos'))
+
 $('#photo-counter').val(index + 1);
 $('#photos').append(tmpl);
 });
