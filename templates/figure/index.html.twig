@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello FigureController!
+{% block title %}Page d'accueil
 {% endblock %}
 
 {% block header %}
@@ -28,17 +28,19 @@
 {% endblock %}
 
 {% block body %}
-	{% for message in app.flashes('success') %}
-		<div class="alert alert-success">
-			{{ message }}
-		</div>
-	{% endfor %}
+
 
 	<div class="container-fluid" id="tricks">
-
+		<div class="text-center">
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success">
+					{{ message }}
+				</div>
+			{% endfor %}
+		</div>
 
 		{{ include ("figure/figures.html.twig") }}
-		
+
 		<div class="text-center">
 			<button type="button" class="btn btn-outline-dark" id="loadMore">Voir plus</button>
 
@@ -94,6 +96,17 @@ hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
 }
 
 btn.addEventListener('click', handleButtonClick);
+window.onscroll = function () {
+scrollFunction();
+};
+
+function scrollFunction() {
+if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+btn.style.display = "block";
+} else {
+btn.style.display = "none";
+}
+}
 	</script>
 
 {% endblock %}

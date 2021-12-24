@@ -6,8 +6,9 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
@@ -18,13 +19,24 @@ class UserType extends AbstractType
     {
         $builder
 
-            ->add('email', TextType::class)
-            ->add('password', PasswordType::class)
+            ->add('email', EmailType::class)
+            ->add('name', TextType::class, [
+                'label' => 'Nom',
+            ])
+            ->add('password', PasswordType::class, [
+                'label' => 'Mot de passe',
+            ])
             ->add('avatar', FileType::class,  [
                 'label' => 'Avatar',
+                'required'   => false,
                 'data_class' => null
             ])
-            ->add('Register', SubmitType::class);
+            ->add('Register', SubmitType::class, [
+                'label' => 'Créer un compte',
+                'attr' => [
+                    'class' => 'btn btn-outline-secondary text-uppercase',
+                ]
+            ]);
     }
     public function configureOptions(OptionsResolver $resolver)
     {

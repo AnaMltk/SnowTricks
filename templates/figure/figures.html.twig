@@ -1,4 +1,5 @@
 <div class="row d-flex justify-content-center" id="figures">
+
 	{% for figure in figures %}
 
 		<div class="col-lg-2 col-md-6">
@@ -23,11 +24,11 @@
 							</div>
 							<div class="col">
 								<div class="text-end">
-									{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+									{% if is_granted('ROLE_ADMIN') %}
 										<a href='{{ path("edit", { 'id':figure.id, slug:figure.name|slug })}}'>
 											<i class="fas fa-pen"></i>
 										</a>
-										<a href='{{ path("delete", {'id':figure.id}) }}' onclick="return confirm('are you sure?')">
+										<a href='{{ path("delete", {'id':figure.id}) }}' onclick="return confirm('êtes-vous sûrs de vouloir supprimer cette figure?')">
 											<i class="far fa-trash-alt"></i>
 										</a>
 									{% endif %}

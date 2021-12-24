@@ -20,9 +20,11 @@ class FigureType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class)
+            ->add('name', TextType::class, [
+                'label' => 'Nom'
+            ])
             ->add('description', TextareaType::class)
-            
+
             ->add('photo', CollectionType::class, [
                 'entry_type' => PhotoType::class,
                 'label' => false,
@@ -38,15 +40,16 @@ class FigureType extends AbstractType
                 'allow_delete' => true
             ])
             ->add('group', EntityType::class, [
-                'label'=> 'Group',
-                'required'=>true,
-                'placeholder'=>'Select group',
-                'class'=>Group::class,
-                'choice_label'=>function(Group $group){
+                'label' => 'Group',
+                'required' => true,
+                'placeholder' => 'Select group',
+                'class' => Group::class,
+                'choice_label' => function (Group $group) {
                     return strtoupper($group->getTitle());
                 }
             ])
             ->add('save', SubmitType::class, [
+                'label' => 'Sauvegarder',
                 'attr' => [
                     'class' => 'btn btn-outline-secondary text-uppercase',
                 ]

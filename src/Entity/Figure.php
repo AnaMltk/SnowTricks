@@ -6,6 +6,7 @@ use App\Entity\Group;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\FigureRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -50,6 +51,10 @@ class Figure
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank
+     * @Assert\Regex(
+     *     pattern     = "/^[a-zA-Z0-9]+$/i",
+     *     message = "Le nom de la figure ne doit être composé que de lettres et chiffres"
+     * )
      */
     private $name;
 

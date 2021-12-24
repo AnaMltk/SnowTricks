@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Figure;
+use App\Repository\GroupRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

@@ -17,14 +17,17 @@ class CommentType extends AbstractType
         $builder
 
             ->add('content', TextType::class, [
+                'label' => 'Votre commentaire',
                 'attr' => [
-                    'placeholder' => 'Comment',
+                    'placeholder' => 'Votre commentaire',
                 ],
                 'row_attr' => [
                     'class' => 'form-floating',
-                ]])
+                ]
+            ])
 
             ->add('save', SubmitType::class, [
+                'label' => 'Publier',
                 'attr' => [
                     'class' => 'btn btn-outline-secondary text-uppercase',
                 ]
