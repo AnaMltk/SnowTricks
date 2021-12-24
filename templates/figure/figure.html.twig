@@ -119,24 +119,23 @@
 	</div>
 {% endblock %}
 {% block javascripts %}
-	{{ parent() }}<script>
-		$(document).ready(function () {
+	{{ parent() }}
+<script>
+	$(document).ready(function () {
+		var offset = {{ maxComments }}
+		$('#load-more-comments').click(function () {
+			const url = '{{ path('load_more_comments') }}' + '/' + {{ figure.id }} + '/' + offset;
+			console.log(url);
+			$.ajax({url: url, method: 'get'}).done(function (message) {
+				$('#comments').append(message)
+				offset += {{ maxComments }};
+				if (offset >= {{ commentCount }}) {
+					$('#comments').append('');
+					$('#load-more-comments').hide()
+				}
+			})
+		})
 
-var offset = {{ maxComments }}
-$('#load-more-comments').click(function () {
-const url = '{{ path('load_more_comments') }}' + '/' + {{ figure.id }} + '/' + offset;
-console.log(url);
-$.ajax({url: url, method: 'get'}).done(function (message) {
-$('#comments').append(message)
-offset += {{ maxComments }};
-if (offset >= {{ commentCount }}) {
-$('#comments').append('');
-$('#load-more-comments').hide()
-}
-})
-})
-
-
-})
-	</script>
+	})
+</script>
 {% endblock %}

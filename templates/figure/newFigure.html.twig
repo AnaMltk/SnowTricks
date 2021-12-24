@@ -37,25 +37,24 @@
 
 {% block javascripts %}
 	{{ parent() }}
-	<script>
-		$(document).ready(function () {
-$('#add-photo').on('click', function (e) {
-const index = + $('#photo-counter').val();
-const tmpl = $('.photos').data('prototype').replace(/__name__/g, index);
-console.log($('.photos'))
-$('#photo-counter').val(index + 1);
-$('#photos').append(tmpl);
-});
-})
+<script>
+	$(document).ready(function () {
+		$('#add-photo').on('click', function (e) {
+			const index = + $('#photo-counter').val();
+			const tmpl = $('.photos').data('prototype').replace(/__name__/g, index);
+			console.log($('.photos'))
+			$('#photo-counter').val(index + 1);
+			$('#photos').append(tmpl);
+		});
+	})
 
-$(document).ready(function () {
-$('#add-video').on('click', function (e) {
-const index = + $('#video-counter').val();
-const tmpl = $('.videos').data('prototype').replace(/__name__/g, index);
-$('#video-counter').val(index + 1);
-$('#videos').append(tmpl);
-
-});
-})
-	</script>
+	$(document).ready(function () {
+		$('#add-video').on('click', function (e) {
+			const index = + $('#video-counter').val();
+			const tmpl = $('.videos').data('prototype').replace(/__name__/g, index);
+			$('#video-counter').val(index + 1);
+			$('#videos').append(tmpl);
+		});
+	})
+</script>
 {% endblock %}

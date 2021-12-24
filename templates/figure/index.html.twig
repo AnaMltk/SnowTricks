@@ -57,32 +57,32 @@
 {% block javascripts %}
 
 	{{ parent() }}
-	<script language="javascript">
-		$(document).ready(function () {
-var offset = {{ maxFigures }};
-$('#loadMore').click(function () {
-$('#loadMore').prop('disabled', true)
-$.ajax({
-url: '{{ path('loadMore') }}' + '/' + offset,
-method: "GET",
-success: function (data) {
-$('#figures').append(data);
-$('#loadMore').prop('disabled', false)
-offset += {{ maxFigures }};
-if (offset >= {{ figureCount }}) {
-$('#figures').append('');
-$('#loadMore').hide();
-}
-}
-});
-});
-});
+<script language="javascript">
+	$(document).ready(function () {
+		var offset = {{ maxFigures }};
+		$('#loadMore').click(function () {
+			$('#loadMore').prop('disabled', true)
+			$.ajax({
+				url: '{{ path('loadMore') }}' + '/' + offset,
+				method: "GET",
+				success: function (data) {
+					$('#figures').append(data);
+					$('#loadMore').prop('disabled', false)
+					offset += {{ maxFigures }};
+					if (offset >= {{ figureCount }}) {
+						$('#figures').append('');
+						$('#loadMore').hide();
+					}
+				}
+			});
+		});
+	});
 
 var hiddenElement = document.getElementById("tricks");
 var btn = document.querySelector('#scroll-down');
 
 function handleButtonClick() {
-hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
+	hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
 }
 
 btn.addEventListener('click', handleButtonClick);
@@ -92,21 +92,21 @@ var hiddenElement = document.getElementById("tricks");
 var btn = document.querySelector('#scroll-up');
 
 function handleButtonClick() {
-hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
+	hiddenElement.scrollIntoView({block: "start", behavior: "smooth"});
 }
 
 btn.addEventListener('click', handleButtonClick);
 window.onscroll = function () {
-scrollFunction();
+	scrollFunction();
 };
 
 function scrollFunction() {
-if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-btn.style.display = "block";
-} else {
-btn.style.display = "none";
+	if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+		btn.style.display = "block";
+	} else {
+		btn.style.display = "none";
+	}
 }
-}
-	</script>
+</script>
 
 {% endblock %}
