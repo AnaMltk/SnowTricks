@@ -46,7 +46,7 @@ $ php bin/console doctrine:database:create
 ### Composer
 run
 ```
-$ composer install
+$ composer update
 ```
 ### Run latest migration
 run
@@ -57,7 +57,7 @@ $ php bin/console doctrine:migrations:migrate
 ### Upload data fixtures
 run
 ```
-$ php bin/console doctrine:load:fixtures
+$ php bin/console doctrine:fixtures:load
 
 ```
 ### Compile assets for WebpackEncore
