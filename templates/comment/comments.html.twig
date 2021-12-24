@@ -1,11 +1,12 @@
 <div class="row justify-content-center">
 	<div class="col-md-6">
-		{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+		{% if is_granted('ROLE_ADMIN') %}
 			{{ form_start(form) }}
 			<section>
 				<div class="card" id="commentForm">
 					<div class="card-body">
-						{{ form_row (form.content) }}
+
+						{{ form_row(form.content)}}
 						{{ form_row (form.save)}}
 					</div>
 				</div>
@@ -23,7 +24,7 @@
 								<div class="col">
 									{% if figure.user.avatar is empty %}
 
-										<img class="avatar" src="/img/placeholder.jpg">
+										<img class="avatar" src="/img/placeholder-avatar.png">
 
 									{% else %}
 										<img class="avatar" src="{{ asset('img/'~figure.user.avatar) }}">
@@ -33,7 +34,7 @@
 									<div class="text-end">
 										<div class="fw-bold">{{ comment.creationDate|date('d/m/Y H:i') }}</div>
 										<div class="fw-bold">Écrit par
-											{{ comment.user.email }}
+											{{ comment.user.name }}
 										</div>
 									</div>
 								</div>

@@ -31,8 +31,7 @@ class VideoUploader
                         $cleanLink = '<iframe src="https://player.vimeo.com/video/' . $matches[0];
                             break;
                 }
-            }
-          
+            } 
         }
         $video->setLink($cleanLink);
         $video->setAlt($videoData->get('alt')->getData());

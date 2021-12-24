@@ -29,7 +29,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class FigureController extends AbstractController
 {
     const MAX_FIGURE = 5;
-   
+
     /**
      * @Route("/", name="index")
      * @param FigureRepository $figureRepository
@@ -43,8 +43,14 @@ class FigureController extends AbstractController
 
         return $this->render('figure/index.html.twig', ['figures' => $figures, 'figureCount' => $figureCount, 'maxFigures' => self::MAX_FIGURE]);
     }
+
     /**
      * @Route("/loadMore/{offset}", name="loadMore")
+     * @param Request $request
+     * @param FigureRepository $figureRepository
+     * @param  $offset
+     * 
+     * @return [type]
      */
     public function loadMore(Request $request, FigureRepository $figureRepository, $offset = self::MAX_FIGURE)
     {
@@ -70,13 +76,13 @@ class FigureController extends AbstractController
     public function getFigure($id, FigureRepository $figureRepository, Request $request, CommentRepository $commentRepository): Response
     {
         $figure = $figureRepository->find($id);
-    
+
         // Les 5 premiers commentaires
-        $comments = $commentRepository->findByFigure($id, 0, 1);
-        
+        $comments = $commentRepository->findByFigure($id, 0, 5);
+
         // Nombre de commentaires au total
-        $commentCount = count($commentRepository->findBy(['figure'=>$id]));
-        
+        $commentCount = count($commentRepository->findBy(['figure' => $id]));
+
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment, [
             'action' => $this->generateUrl('newComment', ['id' => $id]),
@@ -84,16 +90,22 @@ class FigureController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-    
-        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView(), 'comments'=>$comments, 'commentCount' => $commentCount]);
+
+        return $this->render('figure/figure.html.twig', ['figure' => $figure, 'form' => $form->createView(), 'comments' => $comments, 'commentCount' => $commentCount, 'maxComments' => 5]);
     }
 
     /**
      * @Route("/new", name="new")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param PhotoUploader $photoUploader
+     * @param VideoUploader $videoUploader
+     * 
+     * @return Response
      */
-    public function new(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, PhotoUploader $photoUploader, VideoUploader $videoUploader): Response
+    public function new(EntityManagerInterface $entityManager, Request $request, PhotoUploader $photoUploader, VideoUploader $videoUploader): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = $this->getUser();
         $figure = new Figure();
 
@@ -133,10 +145,18 @@ class FigureController extends AbstractController
 
     /**
      * @Route("/edit/{id}-{slug}", name="edit")
+     * @param mixed $id
+     * @param FigureRepository $figureRepository
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param PhotoUploader $photoUploader
+     * @param VideoUploader $videoUploader
+     * 
+     * @return Response
      */
     public function edit($id, FigureRepository $figureRepository, Request $request, EntityManagerInterface $entityManager, PhotoUploader $photoUploader, VideoUploader $videoUploader): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $figure = $figureRepository->find($id);
 
         $form = $this->createForm(FigureType::class, $figure);
@@ -164,23 +184,34 @@ class FigureController extends AbstractController
 
         return $this->render('figure/editFigure.html.twig', ['figure' => $figure, 'form' => $form->createView()]);
     }
+
     /**
      * @Route("/delete/{id}", name="delete")
+     * @param Figure $figure
+     * 
+     * @return Response
      */
-    public function delete(Request $request, Figure $figure)
+    public function delete(Figure $figure): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($figure);
         $entityManager->flush();
         return $this->redirectToRoute('index');
     }
+
     /**
      * @Route("/edit_photo/{id}", name="edit_photo")
+     * @param Photo $photo
+     * @param Request $request
+     * @param PhotoUploader $photoUploader
+     * @param Slug $slug
+     * 
+     * @return Response
      */
     public function editPhoto(Photo $photo, Request $request, PhotoUploader $photoUploader, Slug $slug): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $error = '';
         $form = $this->createForm(PhotoType::class, $photo);
         $form->handleRequest($request);
@@ -190,23 +221,27 @@ class FigureController extends AbstractController
             $entityManager->flush();
             $figure_id = $form->getData()->getFigure()->getId();
             $figure_name = $form->getData()->getFigure()->getName();
-           
-            return $this->redirectToRoute('getFigure', ['id' => $figure_id, 'slug'=>$slug->slugify($figure_name)]);
+
+            return $this->redirectToRoute('edit', ['id' => $figure_id, 'slug' => $slug->slugify($figure_name)]);
         }
-       
+
         return $this->renderForm('figure/editPhoto.html.twig', [
             'form' => $form,
             'error' => $error,
             'figure' => $photo->getFigure()
         ]);
     }
-   
+
     /**
      * @Route("/delete_photo/{id}", name="delete_photo")
+     * @param Request $request
+     * @param Photo $photo
+     * 
+     * @return Response
      */
-    public function deletePhoto(Request $request, Photo $photo)
+    public function deletePhoto(Request $request, Photo $photo): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($photo);
         $entityManager->flush();
@@ -216,32 +251,49 @@ class FigureController extends AbstractController
 
     /**
      * @Route("/edit_video/{id}", name="edit_video")
+     * @param mixed $id
+     * @param Request $request
+     * @param VideoRepository $videoRepository
+     * @param VideoUploader $videoUploader
+     * @param Slug $slug
+     * 
+     * @return Response
      */
-    public function editVideo($id, Request $request, VideoRepository $videoRepository): Response
+    public function editVideo($id, Request $request, VideoRepository $videoRepository, VideoUploader $videoUploader, Slug $slug): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $video = $videoRepository->find($id);
         $form = $this->createForm(VideoType::class, $video);
         $form->handleRequest($request);
         $entityManager = $this->getDoctrine()->getManager();
         if ($form->isSubmitted() && $form->isValid()) {
-            $videoData = $form->get('link')->getData();
-            $video->setLink($videoData);
-            $video->setAlt($form->get('alt')->getData());
-            $entityManager->persist($video);
+
+            //$videoData = $form->get('link')->getData();
+            $videoUploader->upload($entityManager, $form, $video);
+            //$video->setLink($videoData);
+            //$video->setAlt($form->get('alt')->getData());
+            //$entityManager->persist($video);
             $entityManager->flush();
+            $figure_id = $form->getData()->getFigure()->getId();
+            $figure_name = $form->getData()->getFigure()->getName();
+            return $this->redirectToRoute('edit', ['id' => $figure_id, 'slug' => $slug->slugify($figure_name)]);
         }
-        return $this->renderForm('figure/editPhoto.html.twig', [
+        return $this->renderForm('figure/editVideo.html.twig', [
             'form' => $form,
+            'figure' => $video->getFigure()
         ]);
     }
 
     /**
      * @Route("/delete_video/{id}", name="delete_video")
+     * @param Request $request
+     * @param Video $video
+     * 
+     * @return Response
      */
-    public function deleteVideo(Request $request, Video $video)
+    public function deleteVideo(Request $request, Video $video): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($video);
         $entityManager->flush();

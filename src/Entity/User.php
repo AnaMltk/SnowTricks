@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -24,12 +26,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
+     * @Assert\Regex(
+     *     pattern     = "/^[a-zA-Z0-9]+$/i",
+     *     message = "Le nom ne doit être composé que de lettres et chiffres"
+     * )
      * @ORM\Column(type="string", length=180)
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email(
+     *     message = "Veuillez utiliser un email valide"
+     * )
      */
     private $email;
 

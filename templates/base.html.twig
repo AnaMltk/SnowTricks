@@ -6,13 +6,12 @@
 		name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
 		{#<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-																										<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
+																												<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
 		<title>
-			{% block title %}Welcome!
-			{% endblock %}
+			{% block title %}{% endblock %}
 		</title>
 		{# Run `composer require symfony/webpack-encore-bundle`
-																																																																																																																																																																           and uncomment the following Encore helpers to start using Symfony UX #}
+																																																																																																																																																																		           and uncomment the following Encore helpers to start using Symfony UX #}
 		{% block stylesheets %}
 			{{ encore_entry_link_tags('app') }}
 			{#<link href="/css/styles.css" rel="stylesheet"/>#}
@@ -24,31 +23,28 @@
 
 		<nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
 			<div class="container px-4 px-lg-5">
-				<a class="navbar-brand" href="/">Homepage</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#myNavbar" aria-controls="myNavbar" aria-expanded="false" aria-label="Toggle navigation">
-					Menu
-					<i class="fas fa-bars"></i>
-				</button>
+				<a class="navbar-brand" href="/">Page d'accueil</a>
+
 				<div class="collapse navbar-collapse" id="myNavbar">
 					<ul class="navbar-nav ms-auto py-4 py-lg-0">
 						{% if not is_granted('IS_AUTHENTICATED_FULLY') %}
 							<li class="nav-item">
-								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/login">Login</a>
+								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/login">Se connecter</a>
 							</li>
 						{% endif %}
 						{% if is_granted('IS_AUTHENTICATED_FULLY') %}
 							<li class="nav-item">
-								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/logout">Logout</a>
+								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/logout">Se déconnecter</a>
 							</li>
 						{% endif %}
 						{% if not is_granted('IS_AUTHENTICATED_FULLY') %}
 							<li class="nav-item">
-								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/registration">Registration</a>
+								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/registration">Créer un compte</a>
 							</li>
 						{% endif %}
-						{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+						{% if is_granted('ROLE_ADMIN') %}
 							<li class="nav-item">
-								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/new">New Figure</a>
+								<a class="nav-link px-lg-3 py-3 py-lg-4" href="/new">Créer une nouvelle figure</a>
 							</li>
 
 						{% endif %}
@@ -61,30 +57,8 @@
 		{% block header %}{% endblock %}
 		{% block body %}{% endblock %}
 		{#<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-																										<script language="javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>#}
+																												<script language="javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>#}
 
-
-		<div id="footer">
-			<div class="col-xs-12 navbar-inverse navbar-fixed-bottom">
-				<div class="row" id="bottomNav">
-					<div class="col col-xs-4 text-center">
-						<a href="#">
-							<i class="glyphicon glyphicon-circle-arrow-left"></i><br><i class="fas fa-home"></i>
-						</a>
-					</div>
-					<div class="col col-xs-4 text-center">
-						<a href="#">
-							<i class="glyphicon glyphicon-circle-arrow-down"></i><br><i class="fas fa-sign-in-alt"></i>
-						</a>
-					</div>
-					<div class="col col-xs-4 text-center">
-						<a href="#">
-							<i class="glyphicon glyphicon-circle-arrow-right"></i><br><i class="fas fa-sign-out-alt"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
 	</body>
 
 	{% block footer %}
@@ -95,33 +69,14 @@
 
 				<section
 					class="mb-4">
-					<!-- Facebook -->
-					<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
-						<i class="fab fa-facebook-f"></i>
-					</a>
-
-					<!-- Twitter -->
-					<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
-						<i class="fab fa-twitter"></i>
-					</a>
-
-					<!-- Google -->
-					<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
-						<i class="fab fa-google"></i>
-					</a>
-
-					<!-- Instagram -->
-					<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
-						<i class="fab fa-instagram"></i>
-					</a>
 
 					<!-- Linkedin -->
-					<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
+					<a class="btn btn-outline-light btn-floating m-1" href="https://www.linkedin.com/in/anastasia-molotkova/" role="button">
 						<i class="fab fa-linkedin-in"></i>
 					</a>
 
 					<!-- Github -->
-					<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
+					<a class="btn btn-outline-light btn-floating m-1" href="https://github.com/AnaMltk" role="button">
 						<i class="fab fa-github"></i>
 					</a>
 				</section>
@@ -130,6 +85,34 @@
 				© 2021 Copyright: Anastasia Molotkova
 			</div>
 		</footer>
+
+		<div id="footer-mobile">
+			<div class="container">
+				<div class="col-xs-12 navbar-inverse navbar-fixed-bottom">
+					<div class="row" id="bottomNav">
+						<div class="col col-xs-4 text-center">
+							<a href="/">
+								<i class="glyphicon glyphicon-circle-arrow-left"></i><br><i class="fas fa-home"></i>
+							</a>
+						</div>
+						{% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+							<div class="col col-xs-4 text-center">
+								<a href="/login">
+									<i class="glyphicon glyphicon-circle-arrow-down"></i><br><i class="fas fa-sign-in-alt"></i>
+								</a>
+							</div>
+						{% endif %}
+						{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+							<div class="col col-xs-4 text-center">
+								<a href="/logout">
+									<i class="glyphicon glyphicon-circle-arrow-right"></i><br><i class="fas fa-sign-out-alt"></i>
+								</a>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- Footer -->
 	{% endblock %}
 </html>

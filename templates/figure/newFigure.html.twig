@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add New Figure Page
+{% block title %}Ajout d'une figure
 {% endblock %}
 
 {% block body %}
@@ -18,15 +18,15 @@
 				<div id="photos" class="photos" data-prototype="{{ form_widget(form.photo.vars.prototype)|e('html_attr') }}">
 					{{ form_widget(form.photo) }}
 				</div>
-				<button id="add-photo" class="btn btn-outline-secondary text-uppercase add-photo" type="button" data-collection-holder-class="photos">Add a photo</button>
+				<button id="add-photo" class="btn btn-outline-secondary text-uppercase add-photo" type="button" data-collection-holder-class="photos">Ajouter une photo</button>
 
 				<input type="hidden" id="photo-counter" value="0">
-				
+				<div class="text-center">Seulement les videos provenants des plateformes suivantes seront publiées : Youtube, Dailymotion</div>
 				<div id="videos" class="videos" data-prototype="{{ form_widget(form.video.vars.prototype)|e('html_attr') }}">
 					{{ form_widget(form.video) }}
 				</div>
 
-				<button id="add-video" class="btn btn-outline-secondary text-uppercase add-video" type="button" data-collection-holder-class="videos">Add a video</button>
+				<button id="add-video" class="btn btn-outline-secondary text-uppercase add-video" type="button" data-collection-holder-class="videos">Ajouter une video</button>
 				<input type="hidden" id="video-counter" value="0">
 				
 				{{ form_end(form)}}

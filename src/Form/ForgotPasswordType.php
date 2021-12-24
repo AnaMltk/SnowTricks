@@ -19,6 +19,7 @@ class ForgotPasswordType extends AbstractType
 
             ->add('email', TextType::class)
             ->add('save', SubmitType::class, [
+                'label'=>'Reinitialiser',
                 'attr' => [
                     'class' => 'btn btn-outline-secondary text-uppercase',
                 ]

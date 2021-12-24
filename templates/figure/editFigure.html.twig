@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add New Figure Page
+{% block title %}Modification d'une figure
 {% endblock %}
 
 {% block body %}
@@ -14,7 +14,7 @@
 								<img class="img-fluid main-image" src="/img/placeholder.jpg">
 							</div>
 							<div class="overlay">
-								<h2 class="header">{{figure.name}}</h2>
+								<h2 class="header">{{figure.name|upper}}</h2>
 							</div>
 						</div>
 					{% endif %}
@@ -25,56 +25,95 @@
 									<img class="img-fluid main-image" src="{{ asset('img/'~photo.path) }}">
 								</div>
 								<div class="overlay">
-									<h2 class="header">{{figure.name}}</h2>
+									<h2 class="header">{{figure.name|upper}}</h2>
 								</div>
 								<span class="edit">
 									<a href='{{ path("edit_photo", { 'id':photo.id})}}'>
 										<i class="fas fa-pen"></i>
 									</a>
-									<a href='{{ path("delete_photo", {'id':photo.id}) }}' onclick="return confirm('are you sure?')">
+									<a href='{{ path("delete_photo", {'id':photo.id}) }}' onclick="return confirm('êtes-vous sûrs de vouloir supprimer cette photo?')">
 										<i class="far fa-trash-alt"></i>
 									</a>
 								</span>
 							</div>
 
 						{% endif %}
-						<div class="col-md-4 col-sm-12">
-							<div class="card border-0 mt-2" id="figure">
+					{% endfor %}
+					<div class="collapse no-collapse-lg" id="collapseExample">
+						<div class="row">
+							<div class="col-lg-6 col-md-12">
 
-								<img class="card-img-topx trick-image trick-image" src="{{ asset('img/'~photo.path) }}">
-								<div class="card-text">
-									<div class="text-end">
-										<a href='{{ path("edit_photo", { 'id':photo.id})}}'>
-											<i class="fas fa-pen"></i>
-										</a>
-										<a href='{{ path("delete_photo", {'id':photo.id}) }}' onclick="return confirm('are you sure?')">
-											<i class="far fa-trash-alt"></i>
-										</a>
+								<div id="carousel" class="carousel slide mt-3 mb-2" data-ride="carousel">
+									<ol class="carousel-indicators">
+										{% for photo in figure.photos %}
+											<li data-bs-target=".carousel" data-bs-slide-to="{{ loop.index0 }}" {% if loop.index0 == 0 %} class="active" {% endif %}></li>
+										{% endfor %}
+									</ol>
+									<div class="carousel-inner">
+										{% for photo in figure.photos %}
+											<div class="carousel-item {% if loop.index0 == 0 %} active {% endif %}">
+												<img class="trick-image" src="{{ asset('img/'~photo.path) }}">
+												<div class="text-center">
+													<a href='{{ path("edit_photo", { 'id':photo.id})}}'>
+														<i class="fas fa-pen"></i>
+													</a>
+													<a href='{{ path("delete_photo", {'id':photo.id}) }}' onclick="return confirm('êtes-vous sûrs de vouloir supprimer cette photo?')">
+														<i class="far fa-trash-alt"></i>
+													</a>
+												</div>
+											</div>
+										{% endfor %}
 									</div>
+									<a class="carousel-control-prev" href="#carousel" data-bs-slide="prev">
+										<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+									</a>
+									<a class="carousel-control-next" href="#carousel" data-bs-slide="next">
+										<span class="carousel-control-next-icon" aria-hidden="true"></span>
+									</a>
+
 								</div>
 							</div>
-						</div>
+							<div class="col-lg-6 col-md-12">
 
-					{% endfor %}
-					{% for video in figure.videos %}
-						<div class="col-md-4 col-sm-12">
-							<div class="card border-0 mt-2">
-
-								<iframe class="embed-responsive" src="{{ video.link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-								<div class="text-end">
-									<a href='{{ path("edit_video", { 'id':video.id})}}'>
-										<i class="fas fa-pen"></i>
+								<div id="carousel-video" class="carousel slide mt-3 mb-2" data-ride="carousel-video">
+									<ol class="carousel-indicators">
+										{% for video in figure.videos %}
+											<li data-bs-target=".carousel-video" data-bs-slide-to="{{ loop.index0 }}" {% if loop.index0 == 0 %} class="active" {% endif %}></li>
+										{% endfor %}
+									</ol>
+									<div class="carousel-inner">
+										{% for video in figure.videos %}
+											<div class="carousel-item {% if loop.index0 == 0 %} active {% endif %}">
+												<iframe class="embed-responsive" src="{{ video.link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+												<div class="text-center">
+													<a href='{{ path("edit_video", { 'id':video.id})}}'>
+														<i class="fas fa-pen"></i>
+													</a>
+													<a href='{{ path("delete_video", {'id':video.id}) }}' onclick="return confirm('êtes-vous sûrs de vouloir supprimer cette video?')">
+														<i class="far fa-trash-alt"></i>
+													</a>
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+									<a class="carousel-control-prev" href="#carousel-video" data-bs-slide="prev">
+										<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 									</a>
-									<a href='{{ path("delete_video", {'id':video.id}) }}' onclick="return confirm('are you sure?')">
-										<i class="far fa-trash-alt"></i>
+									<a class="carousel-control-next" href="#carousel-video" data-bs-slide="next">
+										<span class="carousel-control-next-icon" aria-hidden="true"></span>
 									</a>
 								</div>
 
 							</div>
 						</div>
-					{% endfor %}
+					</div>
 
 				</section>
+				<div class="d-lg-none d-flex justify-content-center">
+					<button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+						Afficher les Medias
+					</button>
+				</div>
 				<div class="container">
 					<div class="row justify-content-center">
 						<div class="col-md-6">
@@ -84,15 +123,15 @@
 							<div id="photos" class="photos" data-prototype="{{ form_widget(form.photo.vars.prototype)|e('html_attr') }}">
 								{{ form_widget(form.photo) }}
 							</div>
-							<button id="add-photo" class="btn btn-outline-secondary text-uppercase add-photo" type="button" data-collection-holder-class="photos">Add a photo</button>
+							<button id="add-photo" class="btn btn-outline-secondary text-uppercase add-photo" type="button" data-collection-holder-class="photos">Ajouter une photo</button>
 
 							<input type="hidden" id="photo-counter" value="0">
 
 							<div id="videos" class="videos" data-prototype="{{ form_widget(form.video.vars.prototype)|e('html_attr') }}">
 								{{ form_widget(form.video) }}
 							</div>
-
-							<button id="add-video" class="btn btn-outline-secondary text-uppercase add-video" type="button" data-collection-holder-class="videos">Add a video</button>
+							<div class="text-center">Seulement les videos provenants des plateformes suivantes seront publiées : Youtube, Dailymotion</div>
+							<button id="add-video" class="btn btn-outline-secondary text-uppercase add-video" type="button" data-collection-holder-class="videos">Ajouter une video</button>
 							<input type="hidden" id="video-counter" value="0">
 
 							{{ form_end(form)}}
@@ -102,10 +141,7 @@
 			</div>
 		</div>
 	</div>
-
-
 {% endblock %}
-
 {% block javascripts %}
 	{{ parent() }}
 	<script>
@@ -116,6 +152,7 @@ const tmpl = $('.photos').data('prototype').replace(/__name__/g, index);
 
 $('#photo-counter').val(index + 1);
 $('#photos').append(tmpl);
+
 });
 })
 
